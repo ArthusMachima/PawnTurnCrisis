@@ -10,6 +10,7 @@ public abstract class ItemClass : ScriptableObject
     public Image itemIcon;
 
 
+
     public enum _ItemType
     {
         Misc,      //Sellable, material, ect. [WIP]

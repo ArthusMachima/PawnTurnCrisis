@@ -427,7 +427,7 @@ public class GameManager : MonoBehaviour
 
     //Choice Panel Methods
 
-    public IEnumerator OnItemUsed()
+    public IEnumerator OnItemUsed(ItemClass item)
     {
         InvUI.ShowInventory(false);
         yield return new WaitForSeconds(0.5f);
@@ -444,7 +444,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("ITEM USED!! *insert item effect here*");
             yield return new WaitForSeconds(1f);
         }
-
+        
         StartEnemyTurn();
     }
 
