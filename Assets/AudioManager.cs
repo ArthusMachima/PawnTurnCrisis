@@ -33,6 +33,10 @@ public class AudioManager : MonoBehaviour
     public AudioClip s_ClearStage;
     public AudioClip s_FailedStage;
     public AudioClip s_NoBullets;
+    public AudioClip s_Ult;
+    public AudioClip s_UltExplosion;
+    public AudioClip s_DisplayGoodMessage;
+    public AudioClip s_DisplayBadMessage;
 
     Coroutine PlayingMusic;
 

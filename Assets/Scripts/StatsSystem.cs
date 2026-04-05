@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 public class StatsSystem : MonoBehaviour
 {
@@ -12,7 +13,12 @@ public class StatsSystem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI HPNum;
     [SerializeField] private int MaxHP = 1000;
     [Range(0, 1000)] public int HP = 1000;
-    public int DEF;
+    public int DEF=1;
+    public int ATK=100;
+    public int ElemATK=100;
+    public int CritRate=10;
+    public int Speed=1;
+    public List<TempEffect> TempEffects = new();
 
     [Header("Reference")]
     [SerializeField] private GameObject DeathParticle;
@@ -41,7 +47,7 @@ public class StatsSystem : MonoBehaviour
     // UI bar caching
     private RectTransform hpBarRect;
     private float hpBarFullWidth = 0f;
-    private float hpBarFullScaleX = 1f; // fallback for non-UI objects
+    private float hpBarFullScaleX = 1f;
 
     void Start()
     {
@@ -63,6 +69,14 @@ public class StatsSystem : MonoBehaviour
             }
         }
     }
+
+
+
+    public void DeductTurn()
+    {
+
+    }
+
 
 
     void Update()
@@ -107,7 +121,7 @@ public class StatsSystem : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int actualDamage = Mathf.Max(damage - DEF, 0);
+        int actualDamage = Mathf.Max(damage / ((DEF + 10) / 10), 0);
         if (DoDamage)
         {
             HP -= actualDamage;

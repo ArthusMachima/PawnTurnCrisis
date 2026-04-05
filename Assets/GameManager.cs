@@ -2,111 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static ObjectAutoScaleEffect;
 using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
 
-    void HideAttackPanel(bool v)
-    {
-        if (v)
-        {
-            doShootControls = false;
-            AttackPanel.transform.LeanMoveX(Screen.width+(Screen.width/2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
-            {
-                AttackPanelCanvas.alpha = 0;
-            });
-            Cursor.visible = true;
-            SightCursor.SetActive(false);
-        }
-        else
-        {
-            AttackPanelCanvas.alpha = 1;
-            AttackPanel.transform.LeanMoveX(Screen.width-80, AnimationTime).setEaseOutQuint();
-            Cursor.visible = false;
-            SightCursor.SetActive(true);
-        }
-    }
-
-    void HideStatsPanel(bool v)
-    {
-        if (v)
-        {
-            StageInfo.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint();
-            StatsPanel.transform.LeanMoveX(-(Screen.width / 2), AnimationTime).setEaseOutQuint();
-            Cursor.visible = false;
-        }
-        else
-        {
-            StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
-            StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
-            Cursor.visible = true;
 
 
-            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
-            string diff = PlayerPrefs.GetInt("LVL", 2) switch
-            {
-                1 => "Easy",
-                2 => "Normal",
-                3 => "Hard",
-                _ => "Overclock"
-            };
-            DifficultyDisplay.text = diff;
-            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
-        }
-    }
 
-    void HideChoicePanel(bool v)
-    {
-        if (v)
-        {
-            doChoiceControls = false;
-            ChoicePanel.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
-            {
-                ChoicePanelCanvas.alpha = 0;
-            });
-        }
-        else
-        {
-            ChoicePanelCanvas.alpha = 1;
-            aud.PlaySound(aud.SoundFX, aud.s_ReloadGun);
-            ChoicePanel.transform.LeanMoveX(Screen.width-80, AnimationTime).setEaseOutQuint().setOnComplete(() =>
-            {
-                doChoiceControls = true;
-            });
-        }
-    }
-
-    void HideHighscorePanel(bool v)
-    {
-        if (v)
-        {
-            GameOverPanel.LeanMoveY((Screen.height*2)-(Screen.height/4), 1f).setEaseOutQuint();
-            LeanTween.value(gameObject, 20, 10, 0.5f)
-                .setOnUpdate(val =>
-                {
-                    Unsync.speed = val;
-                })
-                .setOnComplete(() => {
-                    GameOverCanvas.alpha = 0;
-                });
-        }
-        else
-        {
-            LeanTween.value(gameObject, 10, 20, 0.5f)
-                .setOnUpdate(val =>
-                {
-                    Unsync.speed = val;
-                })
-                .setOnComplete(() => {
-                    GameOverCanvas.alpha = 1;
-                    GameOverPanel.LeanMoveY(Screen.height - (Screen.height / 4), 1f).setEaseOutQuint();
-                });
-        }
-
-    }
 
     [Header("Debug - Panels")]
     [SerializeField] private float BulletDiagonalAmount;
@@ -220,7 +127,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ScoreCounterText;
     [SerializeField] private TextMeshProUGUI HighScoreCounter;
     [SerializeField] private int Score;
-    [SerializeField] private StatsSystem PlayerStats;
+    public StatsSystem PlayerStats;
     [SerializeField] private bool isPlayerAlive = true;
     [SerializeField] private GameObject StatsPanel;
     [SerializeField] private ConsoleText ConsoleText;
@@ -234,6 +141,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CanvasGroup GameOverCanvas;
     [SerializeField] private CanvasGroup ChoicePanelCanvas;
     [SerializeField] private CanvasGroup AttackPanelCanvas;
+    [SerializeField] private GameObject MessagePanel;
+    [SerializeField] private TextMeshProUGUI MessagePanelText;
 
     [Header("Choice Panel Properties")]
     [SerializeField] private GameObject ChoicePanel;
@@ -247,6 +156,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int HeldCalliber;
     [SerializeField] private int HeldCalliberMax = 10;
     [SerializeField] private TextMeshProUGUI VentButtonText;
+    [SerializeField] private GameObject StatsPanelHalo;
+    [SerializeField] private ObjectAutoScaleEffect AttackHalo;
+    [SerializeField] private GameObject ItemUseHalo;
 
     [Header("Attack Panel Properties")]
     [SerializeField] private GameObject AttackPanel;
@@ -273,7 +185,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float GameOverUIHideDistance;
     [SerializeField] private float GameOverHideUIOffset;
 
-
     [Header("Enemy Properties")]
     [SerializeField] private GameObject[] EnemyTypes;
     public List<GameObject> CurEnemies;
@@ -282,6 +193,20 @@ public class GameManager : MonoBehaviour
     public int MovedEnemiesAmount;
     [SerializeField] private int EnemyIndex;
     [SerializeField] private Vector3 EnemySpawnOffset;
+
+    [Header("Vent Properties")]
+    [SerializeField] GameObject VentPanel;
+    [SerializeField] Transform VentBar;
+    [SerializeField] GameObject VentSight;
+    [SerializeField] bool VentModeControls;
+    [SerializeField] float VentDamage;
+
+
+
+
+
+
+
 
     public static GameManager Instance { get; internal set; }
     private void OnEnable()
@@ -316,7 +241,6 @@ public class GameManager : MonoBehaviour
             //ListDown
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S) || Input.GetAxis("Mouse ScrollWheel") < 0f)
             {
-
                 ChangeList("down");
             }
 
@@ -330,12 +254,21 @@ public class GameManager : MonoBehaviour
                 {
                     case 0:
                         {
-                            Debug.Log("Guard");
+                            if (HeldCalliber==HeldCalliberMax)
+                            {
+                                VentMode();
+                                HeldCalliber = 0;
+                            }
+                            else
+                            {
+                                DisplayMessage("Not enough Held Calliber! End turn with remaining bullets to obtain some.", false);
+                                aud.PlaySound(aud.SoundFX, aud.s_NoBullets);
+                            }
                             break;
                         }
                     case 1:
                         {
-                            Debug.Log("Negotiate");
+                            NegotiateMode(true);
                             break;
                         }
                     case 2:
@@ -387,7 +320,7 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(ShootEffect());
                 } else
                 {
-                    Debug.Log("Out of Ammo!");
+                    aud.PlaySound(aud.SoundFX, aud.s_NoBullets);
                 }
 
             }
@@ -398,12 +331,32 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        //Vent Controls
+        if (VentModeControls)
+        {
+            VentBar.localScale = new(VentDamage/1000, 1, 1);
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            {
+                if (VentDamage<1000) VentDamage += Random.Range(10, 30);
+            }
+        }
 
         //Variable Syncing
         ScoreCounterText.text = "Score: " + Score;
         Shooter.doShoot = doShootControls;
         VentButtonText.text = "VENT ("+HeldCalliber+"/"+HeldCalliberMax+")";
     }
+
+
+
+    private void FixedUpdate()
+    {
+        if (VentModeControls)
+        {
+            if (VentDamage > 0) VentDamage -= Random.Range(1, 3);
+        }
+    }
+
 
 
     private void Start()
@@ -420,31 +373,202 @@ public class GameManager : MonoBehaviour
 
         c_Intro = StartCoroutine(Intro());
         ColorBleed = Camera.main.gameObject.GetComponent<ShaderEffect_BleedingColors>();
-        HighScoreCounter.text = "HIGHSCORE: "+ScoreSystem.GetHighestScoreString();
+        HighScoreCounter.text = "HIGHSCORE: " + ScoreSystem.GetHighestScoreString();
+        MessagePanel.LeanScaleY(0, 0);
     }
 
 
 
-    //Choice Panel Methods
-
-    public IEnumerator OnItemUsed()
+    //Panels
+    void HideAttackPanel(bool v)
     {
+        if (v)
+        {
+            doShootControls = false;
+            AttackPanel.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            {
+                AttackPanelCanvas.alpha = 0;
+            });
+            Cursor.visible = true;
+            SightCursor.SetActive(false);
+        }
+        else
+        {
+            AttackPanelCanvas.alpha = 1;
+            AttackPanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            Cursor.visible = false;
+            SightCursor.SetActive(true);
+        }
+    }
+
+    void HideStatsPanel(bool v)
+    {
+        if (v)
+        {
+            StageInfo.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint();
+            StatsPanel.transform.LeanMoveX(-(Screen.width / 2), AnimationTime).setEaseOutQuint();
+            Cursor.visible = false;
+        }
+        else
+        {
+            StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
+            Cursor.visible = true;
+
+
+            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
+            string diff = PlayerPrefs.GetInt("LVL", 2) switch
+            {
+                1 => "Easy",
+                2 => "Normal",
+                3 => "Hard",
+                _ => "Overclock"
+            };
+            DifficultyDisplay.text = diff;
+            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
+        }
+    }
+
+    void HideChoicePanel(bool v)
+    {
+        if (v)
+        {
+            doChoiceControls = false;
+            ChoicePanel.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            {
+                ChoicePanelCanvas.alpha = 0;
+            });
+        }
+        else
+        {
+            AttackHalo.autoScaleType = AutoScaleType.Grow;
+            AttackHalo.gameObject.SetActive(true);
+            ChoicePanelCanvas.alpha = 1;
+            aud.PlaySound(aud.SoundFX, aud.s_ReloadGun);
+            ChoicePanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            {
+                doChoiceControls = true;
+            });
+            StartCoroutine(CheckCurEnemy());
+        }
+    }
+
+    void HideHighscorePanel(bool v)
+    {
+        if (v)
+        {
+            GameOverPanel.LeanMoveY((Screen.height * 2) - (Screen.height / 4), 1f).setEaseOutQuint();
+            LeanTween.value(gameObject, 20, 10, 0.5f)
+                .setOnUpdate(val =>
+                {
+                    Unsync.speed = val;
+                })
+                .setOnComplete(() => {
+                    GameOverCanvas.alpha = 0;
+                });
+        }
+        else
+        {
+            LeanTween.value(gameObject, 10, 20, 0.5f)
+                .setOnUpdate(val =>
+                {
+                    Unsync.speed = val;
+                })
+                .setOnComplete(() => {
+                    GameOverCanvas.alpha = 1;
+                    GameOverPanel.LeanMoveY(Screen.height - (Screen.height / 4), 1f).setEaseOutQuint();
+                });
+        }
+
+    }
+
+    IEnumerator CheckCurEnemy()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (CurEnemies.Count == 0)
+        {
+            EndWave();
+        }
+    }
+    
+
+
+    //Choice Panel Methods
+    public void DisplayMessage(string msg, bool good)
+    {
+        LeanTween.cancel(MessagePanel);
+        if (good) aud.PlaySound(aud.SoundFX, aud.s_DisplayGoodMessage);
+        else      aud.PlaySound(aud.SoundFX, aud.s_DisplayBadMessage);
+        MessagePanelText.text = msg;
+        MessagePanel.LeanScaleY(0, 0).setOnComplete(() =>
+        {
+            MessagePanel.LeanScaleY(1, 0.3f).setEaseOutQuint().setOnComplete(() =>
+            {
+                MessagePanel.LeanScaleY(0, 0.3f).setEaseOutQuint().setDelay(2);
+            });
+        });
+    }
+
+    public IEnumerator OnItemUsed(ItemClass item)
+    {
+        ItemUseHalo.SetActive(true);
+        HideStatsPanel(false);
         InvUI.ShowInventory(false);
         yield return new WaitForSeconds(0.5f);
-        HideStatsPanel(false);
+
+        if (item is ItemRemedyClass)
+        {
+            ItemRemedyClass remedy = item as ItemRemedyClass;
+            for (int i=0; i<6; i++)
+            {
+                DoPlayerView();
+                switch (i)
+                {
+                    case 0:
+                        if (remedy.AddedHP == 0) break;
+                        PlayerStats.HP += remedy.AddedHP;
+                        DisplayMessage("Your HP has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 1:
+                        if (remedy.AddedDEF == 0) break;
+                        PlayerStats.DEF += remedy.AddedDEF;
+                        DisplayMessage("Your DEF has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 2:
+                        if (remedy.AddedATK == 0) break;
+                        PlayerStats.ATK += remedy.AddedATK;
+                        DisplayMessage("Your ATK has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 3:
+                        if (remedy.AddedElemATK == 0) break;
+                        PlayerStats.ElemATK += remedy.AddedElemATK;
+                        DisplayMessage("Your Element ATK has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 4:
+                        if (remedy.AddedCritRate == 0) break;
+                        PlayerStats.CritRate += remedy.AddedCritRate;
+                        DisplayMessage("Your CritRate has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 5:
+                        if (remedy.AddedSPEED == 0) break;
+                        PlayerStats.Speed += remedy.AddedSPEED;
+                        DisplayMessage("Your SPEED has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                }
+            }
+        }
+
         DoFirstPersonView();
         HideChoicePanel(true);
         HideAttackPanel(false);
         ReloadAttackPanel(0);
-
-        int effectAmount = 3;
-        for (int i=0; i<effectAmount; i++)
-        {
-            //Insert effect logic here
-            Debug.Log("ITEM USED!! *insert item effect here*");
-            yield return new WaitForSeconds(1f);
-        }
-
+        DoFirstPersonView();
         StartEnemyTurn();
     }
 
@@ -458,12 +582,15 @@ public class GameManager : MonoBehaviour
         if (reloaded) ReloadAttackPanel(6);
         else ReloadAttackPanel(0);
         StartEnemyTurn();
+        AttackHalo.autoScaleType = AutoScaleType.Shrink;
+        AttackHalo.gameObject.SetActive(true);
     }
 
     public void InventoryMode(bool show)
     {
         if (show)
         {
+            InvUI.gameObject.SetActive(true);
             InvUI.ShowInventory(true);
             HideChoicePanel(true);
             HideStatsPanel(true);
@@ -480,7 +607,37 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         HideChoicePanel(false);
         HideStatsPanel(false);
-        StartUpChoicePanel();
+        StartUpChoicePanel(false);
+        InvUI.gameObject.SetActive(false);
+    }
+
+    public void NegotiateMode(bool show)
+    {
+        NegotiateUI.Instance.ShowNegotiatePanel = show;
+        if (show)
+        {
+            StatsPanelHalo.SetActive(true);
+            Cursor.visible = false;
+            SightCursor.SetActive(true);
+            HideChoicePanel(true);
+            HideStatsPanel(true);
+            DoNegotiateView();
+        }
+        else
+        {
+            StartCoroutine(delayedNegotiateMode());
+        }
+    }
+
+    IEnumerator delayedNegotiateMode()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Cursor.visible = true;
+        SightCursor.SetActive(false);
+        HideChoicePanel(false);
+        HideStatsPanel(false);
+        DoCinemaView();
+        StartUpChoicePanel(false);
     }
 
     void ChangeList(string direction)
@@ -552,7 +709,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void StartUpChoicePanel()
+    void StartUpChoicePanel(bool reload)
     {
         for (int i = 0; i <= ChoiceBulletAmount; i++)
         {
@@ -560,10 +717,55 @@ public class GameManager : MonoBehaviour
             ChoiceButton[i].transform.LeanMoveLocalX(ChoiceButtonPos[i] * BulletDiagonalAmount, AnimationTime).setEaseOutQuint();
         }
 
-        HeldCalliber += ClipIndex;
-        if (HeldCalliber>HeldCalliberMax)
-            HeldCalliber = HeldCalliberMax;
+        if (reload)
+        {
+            HeldCalliber += ClipIndex;
+            if (HeldCalliber > HeldCalliberMax)
+                HeldCalliber = HeldCalliberMax;
+        }
+    }
 
+    void VentMode()
+    {
+        VentDamage = 0;
+        ClipIndex = 0;
+        VentPanel.SetActive(true);
+        HideChoicePanel(true);
+        HideStatsPanel(true);
+        DoFirstPersonView();
+        StartCoroutine(VentTimer());
+        VentModeControls = true;
+        aud.PlaySound(aud.SoundFX, aud.s_Ult);
+    }
+
+    IEnumerator VentTimer()
+    {
+        List<StatsSystem> enemyStats = new();
+        foreach (GameObject enemy in CurEnemies)
+        {
+            enemyStats.Add(enemy.GetComponentInChildren<StatsSystem>());
+        }
+        yield return new WaitForSeconds(3);
+        aud.PlaySound(aud.SoundFX, aud.s_UltExplosion);
+        foreach (StatsSystem stats in enemyStats) stats.TakeDamage((int)VentDamage);
+        VentModeControls = false;
+        VentPanel.SetActive(false);
+        DoCinemaView();
+
+        //todo exploode
+        yield return new WaitForSeconds(1);
+        AttackHalo.autoScaleType = AutoScaleType.Grow;
+        AttackHalo.gameObject.SetActive(true);
+        HideChoicePanel(false);
+        HideStatsPanel(false);
+        if (CurEnemies.Count == 0)
+        {
+            EndWave();
+        }
+        else
+        {
+            StartUpChoicePanel(true);
+        }
     }
 
 
@@ -595,15 +797,21 @@ public class GameManager : MonoBehaviour
     {
         MovingEnemiesAmount = CurEnemies.Count;
         MovedEnemiesAmount = 0;
+        for (int i = 0; i < AllEnemies.Count; i++)
+        {
+            AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+        }
+        StartCoroutine(StartEnemyTurnCorou());
+    }
+
+    IEnumerator StartEnemyTurnCorou()
+    {
         for (int i = 0; i < CurEnemies.Count; i++)
         {
             CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
             CurEnemies[i].transform.GetChild(0).GetComponent<StatsSystem>().RestoreMaterial();
             CurEnemies[i].transform.GetChild(0).GetComponent<EnemyAI>().DoStartTurn();
-        }
-        for (int i = 0; i < AllEnemies.Count; i++)
-        {
-            AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+            yield return new WaitForSeconds(1);
         }
     }
 
@@ -652,7 +860,7 @@ public class GameManager : MonoBehaviour
         HideAttackPanel(true);
         DoCinemaView();
         HideChoicePanel(false);
-        StartUpChoicePanel();
+        StartUpChoicePanel(true);
         for (int i = 0; i < CurEnemies.Count; i++)
         {
             CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
@@ -831,7 +1039,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
     //Attack Panel Methods
     void AttackShoot()
     {
@@ -896,7 +1103,7 @@ public class GameManager : MonoBehaviour
         Tonfa.transform.LeanRotateZ(0, 0.2f).setEaseInQuart();
         yield return new WaitForSeconds(0.1f);
         isParrying = false;
-        yield return new WaitForSeconds(0.4f); //Cooldown
+        yield return new WaitForSeconds(0.4f*(10/(9+PlayerStats.Speed))); //Cooldown
         c_Parry = null;
     }
 
@@ -920,6 +1127,36 @@ public class GameManager : MonoBehaviour
 
 
     //Camera Methods
+    public void DoNegotiateView()
+    {
+        if (c_CinemaView != null) StopCoroutine(c_CinemaView);
+        CamFollow.doFollow = true;
+        CamLookAt.doLook = true;
+        CamFollow.SetPos(DynamicPositionPoints[7]);
+        CamLookAt.SetLook(ViewPoints[2]);
+        CamFollow.SetSpeed(LandscapeViewSpeed);
+    }
+
+    public void DoPlayerView()
+    {
+        if (c_CinemaView != null) StopCoroutine(c_CinemaView);
+        CamFollow.doFollow = true;
+        CamLookAt.doLook = true;
+        CamFollow.SetPos(StaticPositionPoints[6]);
+        CamLookAt.SetLook(StaticPositionPoints[0]);
+        CamFollow.SetSpeed(CinemaViewSpeed);
+    }
+
+    public void DoEnemyView()
+    {
+        if (c_CinemaView != null) StopCoroutine(c_CinemaView);
+        CamFollow.doFollow = true;
+        CamLookAt.doLook = true;
+        CamFollow.SetPos(StaticPositionPoints[6]);
+        CamLookAt.SetLook(ViewPoints[2]);
+        CamFollow.SetSpeed(CinemaViewSpeed);
+    }
+
     public void DoLandscapeView()
     {
         if (c_CinemaView!=null) StopCoroutine(c_CinemaView);
@@ -1109,7 +1346,7 @@ public class GameManager : MonoBehaviour
         index = 0;
         ChoicePanel.transform.LeanMoveX(RightPanelHideDistance + RightPanelHideOffset, AnimationTime).setEaseOutQuint().setOnComplete(() =>
         {
-            StartUpChoicePanel();
+            StartUpChoicePanel(true);
         });
 
         SpawnEnemies();
@@ -1161,7 +1398,6 @@ public class GameManager : MonoBehaviour
         HideChoicePanel(false);
         HideStatsPanel(false);
     }
-
 
 
 

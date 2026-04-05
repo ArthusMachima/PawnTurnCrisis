@@ -202,7 +202,11 @@ MonoBehaviour:
   HPNum: {fileID: 1104537665989728574}
   MaxHP: 400
   HP: 1000
-  DEF: 0
+  DEF: 1
+  ATK: 100
+  ElemATK: 100
+  CritRate: 10
+  Speed: 1
   DeathParticle: {fileID: 7492019219895835984, guid: 00f9cca879d88e2489e22736a3f69a6e, type: 3}
   DamageMatFX: {fileID: 2100000, guid: e02f4fcc74b962c4f9ef8a234a157ad3, type: 2}
   DoDamage: 1
@@ -236,14 +240,11 @@ MonoBehaviour:
   prev_Point: 0
   YOffset: -7.5
   XOffset: 0
-  isAlive: 1
   IdleModle: {fileID: 2903655394630448407}
   aud: {fileID: 0}
   LVLText: {fileID: 5896046346654098971}
   type: 1
   level: 0
-  Damage: 50
-  CritRate: 5
 --- !u!33 &8145240173970011033
 MeshFilter:
   m_ObjectHideFlags: 0

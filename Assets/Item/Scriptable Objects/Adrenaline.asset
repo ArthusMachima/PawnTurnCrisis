@@ -13,18 +13,12 @@ MonoBehaviour:
   m_Name: Adrenaline
   m_EditorClassIdentifier: 
   itemName: Adrenaline
-  itemDescription: Hightens your sense. +50 ATK for 5 turns
+  itemDescription: Hightens your sense. +100 ATK for 5 turns
   itemIcon: {fileID: 0}
   PerTurnDuration: 5
   AddedHP: 0
-  AddedATK: 50
+  AddedATK: 100
   AddedElemATK: 0
   AddedCritRate: 0
   AddedDEF: 0
   AddedSPEED: 0
-  TempHP: 0
-  TempATK: 0
-  TempElemATK: 0
-  TempCritRate: 0
-  TempDEF: 0
-  TempSPEED: 0

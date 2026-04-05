@@ -12,12 +12,5 @@ public class ItemRemedyClass : ItemClass
     public int AddedCritRate;
     public int AddedDEF;
     public int AddedSPEED;
-
-    [Header("Temporary Effects")]
-    public int TempHP;
-    public int TempATK;
-    public int TempElemATK;
-    public int TempCritRate;
-    public int TempDEF;
-    public int TempSPEED;
 }
+
