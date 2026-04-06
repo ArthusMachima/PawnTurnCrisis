@@ -10,11 +10,6 @@ using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
-
-
-
-
-
     [Header("Debug - Panels")]
     [SerializeField] private float BulletDiagonalAmount;
     [SerializeField] private int ChoiceBulletAmount;
