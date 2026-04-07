@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static ObjectAutoScaleEffect;
@@ -10,10 +9,6 @@ using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
-
-
-
-
     [Header("Debug")]
     [SerializeField] private bool BypassVentReq;
     [SerializeField] private bool AvoidPlayerDamage;
@@ -610,7 +605,6 @@ public class GameManager : MonoBehaviour
         }
 
 
-
         List<StatsSystem> enemyStats = new();
         foreach (GameObject enemy in CurEnemies) enemyStats.Add(enemy.GetComponentInChildren<StatsSystem>());
         /*
@@ -871,7 +865,6 @@ public class GameManager : MonoBehaviour
 
         LeanTween.value(gameObject, ColorBleed.intensity, 10f, 1f)
             .setOnUpdate((float val) => ColorBleed.intensity = val);
-
         yield return new WaitForSeconds(1);
         AttackHalo.autoScaleType = AutoScaleType.Grow;
         AttackHalo.gameObject.SetActive(true);
@@ -974,6 +967,18 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < AllEnemies.Count; i++)
         {
             AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+        }
+        StartCoroutine(StartEnemyTurnCorou());
+    }
+
+    IEnumerator StartEnemyTurnCorou()
+    {
+        for (int i = 0; i < CurEnemies.Count; i++)
+        {
+            CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
+            CurEnemies[i].transform.GetChild(0).GetComponent<StatsSystem>().RestoreMaterial();
+            CurEnemies[i].transform.GetChild(0).GetComponent<EnemyAI>().DoStartTurn(i);
+            yield return new WaitForSeconds(1);
         }
         for (int i = 0; i < CurEnemies.Count; i++)
         {

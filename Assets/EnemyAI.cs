@@ -102,7 +102,6 @@ public class EnemyAI : MonoBehaviour
                         RandomPosition = Random.Range(0, 4);
                     } while (RandomPosition == prev_Point);
                     prev_Point = RandomPosition;
-
                     RandomTime = Random.Range(0.5f * statsSystem.Speed, 1 * statsSystem.Speed);
                     MoveTo(RandomPosition, RandomTime, false);
                     yield return new WaitForSeconds(RandomTime);
@@ -131,7 +130,6 @@ public class EnemyAI : MonoBehaviour
 
 
             case 1: //Pawn
-
                 RandomTime = Random.Range(0.25f * statsSystem.Speed, 0.5f * statsSystem.Speed);
                 MoveTo(5, RandomTime, true);
                 yield return new WaitForSeconds(RandomTime);
