@@ -294,7 +294,6 @@ public class GameManager : MonoBehaviour
         }
 
 
-        //Attack Panel Controls
         if (doShootControls)
         {
             if (PlayerStats.HP<=0 && isPlayerAlive)
@@ -340,7 +339,6 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        //Vent Controls
         if (VentModeControls)
         {
             VentBar.localScale = new(VentDamage/1000, 1, 1);
@@ -568,15 +566,17 @@ public class GameManager : MonoBehaviour
                         if (remedy.AddedHP == 0) break;
                         PlayerStats.HP += remedy.AddedHP;
                         if (remedy.AddedHP > 0)
-                            if (PlayerStats.HP>PlayerStats.MaxHP)
+                        {
+                            if (PlayerStats.HP > PlayerStats.MaxHP)
                             {
                                 PlayerStats.HP = PlayerStats.MaxHP;
                                 DisplayMessage($"You maxxed out your HP!", true, 2);
                             }
                             else
                                 DisplayMessage($"+{remedy.AddedHP} to your HP!", true, 2);
+                        }
                         else if (remedy.AddedHP < 0)
-                            DisplayMessage($"-{remedy.AddedHP} to your HP!", false, 2);
+                            DisplayMessage($"{remedy.AddedHP} to your HP!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 1:
@@ -585,7 +585,7 @@ public class GameManager : MonoBehaviour
                         if (remedy.AddedDEF > 0)
                             DisplayMessage($"+{remedy.AddedDEF} to your DEF!", true, 2);
                         else if (remedy.AddedDEF < 0)
-                            DisplayMessage($"-{remedy.AddedDEF} to your DEF!", false, 2);
+                            DisplayMessage($"{remedy.AddedDEF} to your DEF!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 2:
@@ -594,7 +594,7 @@ public class GameManager : MonoBehaviour
                         if (remedy.AddedATK > 0)
                             DisplayMessage($"+{remedy.AddedATK} to your ATK!", true, 2);
                         else if (remedy.AddedATK < 0)
-                            DisplayMessage($"-{remedy.AddedATK} to your ATK!", false, 2);
+                            DisplayMessage($"{remedy.AddedATK} to your ATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 3:
@@ -603,7 +603,7 @@ public class GameManager : MonoBehaviour
                         if (remedy.AddedElemATK > 0)
                             DisplayMessage($"+{remedy.AddedElemATK} to your ElemATK!", true, 2);
                         else if (remedy.AddedElemATK < 0)
-                            DisplayMessage($"-{remedy.AddedElemATK} to your ElemATK!", false, 2);
+                            DisplayMessage($"{remedy.AddedElemATK} to your ElemATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 4:
@@ -612,7 +612,7 @@ public class GameManager : MonoBehaviour
                         if (remedy.AddedCritRate > 0)
                             DisplayMessage($"+{remedy.AddedCritRate} to your CritRate!", true, 2);
                         else if (remedy.AddedCritRate < 0)
-                            DisplayMessage($"-{remedy.AddedCritRate} to your CritRate!", false, 2);
+                            DisplayMessage($"{remedy.AddedCritRate} to your CritRate!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 5:
@@ -621,7 +621,7 @@ public class GameManager : MonoBehaviour
                         if (remedy.AddedSPEED > 0)
                             DisplayMessage($"+{remedy.AddedSPEED} to your Speed!", true, 2);
                         else if (remedy.AddedSPEED < 0)
-                            DisplayMessage($"-{remedy.AddedSPEED} to your Speed!", false, 2);
+                            DisplayMessage($"{remedy.AddedSPEED} to your Speed!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                 }
@@ -636,73 +636,73 @@ public class GameManager : MonoBehaviour
             ItemInflictorClass inflictor = item as ItemInflictorClass;
             for (int i = 0; i < 6; i++)
             {
-                DoPlayerView();
+                DoEnemyView();
                 switch (i)
                 {
                     case 0:
                         if (inflictor.AddedHP == 0) break;
                         foreach (var enemy in enemyStats) enemy.HP = inflictor.AddedHP;
                         if (inflictor.AddedHP > 0)
-                            DisplayMessage($"+{inflictor.AddedHP} to your HP!", true, 2);
+                            DisplayMessage($"+{inflictor.AddedHP} to enemies' HP!", true, 2);
                         else if (inflictor.AddedHP < 0)
-                            DisplayMessage($"-{inflictor.AddedHP} to your HP!", false, 2);
+                            DisplayMessage($"{inflictor.AddedHP} to enemies' HP!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 1:
                         if (inflictor.AddedDEF == 0) break;
                         foreach (var enemy in enemyStats) enemy.DEF = inflictor.AddedDEF;
                         if (inflictor.AddedDEF > 0)
-                            DisplayMessage($"+{inflictor.AddedDEF} to your DEF!", true, 2);
+                            DisplayMessage($"+{inflictor.AddedDEF} to enemies' DEF!", true, 2);
                         else if (inflictor.AddedDEF < 0)
-                            DisplayMessage($"-{inflictor.AddedDEF} to your DEF!", false, 2);
+                            DisplayMessage($"{inflictor.AddedDEF} to enemies' DEF!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 2:
                         if (inflictor.AddedATK == 0) break;
                         foreach (var enemy in enemyStats) enemy.ATK = inflictor.AddedATK;
                         if (inflictor.AddedATK > 0)
-                            DisplayMessage($"+{inflictor.AddedATK} to your ATK!", true, 2);
+                            DisplayMessage($"+{inflictor.AddedATK} to enemies' ATK!", true, 2);
                         else if (inflictor.AddedATK < 0)
-                            DisplayMessage($"-{inflictor.AddedATK} to your ATK!", false, 2);
+                            DisplayMessage($"{inflictor.AddedATK} to enemies' ATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 3:
                         if (inflictor.AddedElemATK == 0) break;
                         foreach (var enemy in enemyStats) enemy.ElemATK = inflictor.AddedElemATK;
                         if (inflictor.AddedElemATK > 0)
-                            DisplayMessage($"+{inflictor.AddedElemATK} to your ElemATK!", true, 2);
+                            DisplayMessage($"+{inflictor.AddedElemATK} to enemies' ElemATK!", true, 2);
                         else if (inflictor.AddedElemATK < 0)
-                            DisplayMessage($"-{inflictor.AddedElemATK} to your ElemATK!", false, 2);
+                            DisplayMessage($"{inflictor.AddedElemATK} to enemies' ElemATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 4:
                         if (inflictor.AddedCritRate == 0) break;
                         foreach (var enemy in enemyStats) enemy.CritRate = inflictor.AddedCritRate;
                         if (inflictor.AddedCritRate > 0)
-                            DisplayMessage($"+{inflictor.AddedCritRate} to your CritRate!", true, 2);
+                            DisplayMessage($"+{inflictor.AddedCritRate} to enemies' CritRate!", true, 2);
                         else if (inflictor.AddedCritRate < 0)
-                            DisplayMessage($"-{inflictor.AddedCritRate} to your CritRate!", false, 2);
+                            DisplayMessage($"{inflictor.AddedCritRate} to enemies' CritRate!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 5:
                         if (inflictor.AddedSPEED == 0) break;
                         foreach (var enemy in enemyStats) enemy.Speed = inflictor.AddedSPEED;
                         if (inflictor.AddedSPEED > 0)
-                            DisplayMessage($"+{inflictor.AddedSPEED} to your Speed!", true, 2);
+                            DisplayMessage($"+{inflictor.AddedSPEED} to enemies' Speed!", true, 2);
                         else if (inflictor.AddedSPEED < 0)
-                            DisplayMessage($"-{inflictor.AddedSPEED} to your Speed!", false, 2);
+                            DisplayMessage($"{inflictor.AddedSPEED} to enemies' Speed!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                 }
             }
-
-            DoFirstPersonView();
-            HideChoicePanel(true);
-            HideAttackPanel(false);
-            ReloadAttackPanel(0);
-            DoFirstPersonView();
-            StartEnemyTurn();
         }
+
+        DoFirstPersonView();
+        HideChoicePanel(true);
+        HideAttackPanel(false);
+        ReloadAttackPanel(0);
+        DoFirstPersonView();
+        StartEnemyTurn();
     }
 
     public void ShootMode(bool reloaded)
@@ -983,13 +983,11 @@ public class GameManager : MonoBehaviour
         if (isParrying)
         {
             aud.PlaySound(aud.SoundFX, aud.s_Parried);
-            Debug.Log("PARRY");
-            StartCoroutine(Parried());
+            StartCoroutine(Parried(true));
         }
         else
         {
             aud.PlaySound(aud.SoundFX, aud.s_EnemyBash);
-            Debug.Log("Player took "+dmg+" dmg!!!");
             if (!AvoidPlayerDamage) PlayerStats.TakeDamage(dmg);
             StartCoroutine(Damaged());
             if (criticalhit)
@@ -1314,21 +1312,26 @@ public class GameManager : MonoBehaviour
         c_Parry = null;
     }
 
-    IEnumerator Parried()
+    public void DoParryEffect()
+    {
+        StartCoroutine(Parried(false));
+    }
+
+    IEnumerator Parried(bool onSelf)
     {
         float RandomIntensity = Random.Range(10, 200);
-        float RandomShift = Random.Range(0, 1);
+        float RandomShift = Random.Range(0, 2);
         ColorBleed.intensity = RandomIntensity;
         ColorBleed.shift = RandomShift;
         ParryEffect.SetActive(true);
         Time.timeScale = 0;
-        Instantiate(DamageEffectParticle, GameObject.Find("Player").transform.position + new Vector3(1, 1, 0), Quaternion.identity);
+        if (onSelf) Instantiate(DamageEffectParticle, GameObject.Find("Player").transform.position + new Vector3(1, 1, 0), Quaternion.identity);
         yield return new WaitForSecondsRealtime(0.2f);
         Time.timeScale = 1;
         ParryEffect.SetActive(false);
         ColorBleed.intensity = 10;
-        ColorBleed.shift = 0.01f;
-        AddScore("Parried");
+        ColorBleed.shift = 0.02f;
+        if (onSelf) AddScore("Parried");
     }
 
 
@@ -1470,6 +1473,9 @@ public class GameManager : MonoBehaviour
     //Scene
     IEnumerator GameOver()
     {
+        doChoiceControls = false;
+        doShootControls = false;
+        VentModeControls = false;
         aud.DoLerpPitch(aud.Music, 0.4f, 7f);
         aud.PlaySound(aud.SoundFX, aud.s_FailedStage);
         ColorBleed.intensity = 400;

@@ -104,13 +104,13 @@ public class EnemyAI : MonoBehaviour
                         RandomPosition = Random.Range(0, 4);
                     } while (RandomPosition == prev_Point);
                     prev_Point = RandomPosition;
-                    RandomTime = Random.Range(0.5f * statsSystem.Speed, 1 * statsSystem.Speed);
+                    RandomTime = Random.Range(0.5f * (10/(9+statsSystem.Speed)), 1 * statsSystem.Speed);
                     MoveTo(RandomPosition, RandomTime, false);
                     yield return new WaitForSeconds(RandomTime);
                     MoveAmount--;
                 }
 
-                MoveTo(5 * statsSystem.Speed, 0.5f*statsSystem.Speed, true);
+                MoveTo(5 * statsSystem.Speed, 0.5f * (10 / (9 + statsSystem.Speed)), true);
                 yield return new WaitForSeconds(0.5f);
                 int critChance = Random.Range(1, 101);
                 if (critChance <= statsSystem.CritRate)
@@ -132,7 +132,7 @@ public class EnemyAI : MonoBehaviour
 
 
             case 1: //Pawn
-                RandomTime = Random.Range(0.25f * statsSystem.Speed, 0.5f * statsSystem.Speed);
+                RandomTime = Random.Range(0.25f * (10 / (9 + statsSystem.Speed)), 0.5f * (10 / (9 + statsSystem.Speed)));
                 MoveTo(5, RandomTime, true);
                 yield return new WaitForSeconds(RandomTime);
                 int critChancePawn = Random.Range(1, 101);
@@ -167,7 +167,7 @@ public class EnemyAI : MonoBehaviour
                     } while (RandomPosition == prev_Point);
                     prev_Point = RandomPosition;
 
-                    RandomTime = Random.Range(0.5f * statsSystem.Speed, 1 * statsSystem.Speed);
+                    RandomTime = Random.Range(0.5f * (10 / (9 + statsSystem.Speed)), 1* (10 / (9 + statsSystem.Speed))*(10 / (9 + statsSystem.Speed)));
                     MoveTo(RandomPosition, RandomTime, false);
                     transform.LeanMoveY(-4, RandomTime / 2).setEaseOutQuart().setOnComplete(() =>
                     {
@@ -177,7 +177,7 @@ public class EnemyAI : MonoBehaviour
                     MoveAmount--;
                 }
 
-                MoveTo(5, 0.75f, true);
+                MoveTo(5, 0.75f * (10 / (9 + statsSystem.Speed)), true);
                 transform.LeanMoveY(-4, 0.5f / 2).setEaseOutQuart().setOnComplete(() =>
                 {
                     transform.LeanMoveY(-7.5f, 0.5f / 2).setEaseInQuart(); //Jumping

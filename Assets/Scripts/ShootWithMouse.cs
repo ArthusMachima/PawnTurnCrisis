@@ -35,23 +35,25 @@ public class ShootWithMouse : MonoBehaviour
                     int critChance = Random.Range(0, 101);
                     if (critChance <= GameManager.Instance.PlayerStats.CritRate)
                     {
-                        Debug.Log("Critical Hit!!!");
-                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.ATK * 2);
+                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.ATK * 2, true);
                     }
                     else
                     {
-                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.ATK);
+                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.ATK, false);
                     }
                 }
             }
         }
     }
 
-    private void SendDamage(GameObject obj, int dmg)
+    private void SendDamage(GameObject obj, int dmg, bool crit)
     {
         try
         {
-            obj.GetComponent<StatsSystem>().TakeDamage(dmg);
+            StatsSystem stats = obj.GetComponent<StatsSystem>();
+            if (stats == null) return;
+            if (crit) GameManager.Instance.DoParryEffect();
+            stats.TakeDamage(dmg);
         }
         catch
         {
