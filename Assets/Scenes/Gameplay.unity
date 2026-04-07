@@ -1370,8 +1370,8 @@ MonoBehaviour:
   - {fileID: 1398275555}
   - {fileID: 101395334}
   - {fileID: 800389607}
-  ChoiceButtonPos: 0000000001000000020000000300000004000000
-  ChoiceIndex: 0
+  ChoiceButtonPos: 0100000000000000010000000200000003000000
+  ChoiceIndex: 1
   doChoiceControls: 0
   InvUI: {fileID: 8089998441176307783}
   HeldCalliber: 0

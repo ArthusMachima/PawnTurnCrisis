@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Thymosin
+  m_Name: Steroid 20mL
   m_EditorClassIdentifier: 
-  itemName: Thymosin
-  itemDescription: Improves immune system. +5 DEF for 5 turns
+  itemName: Steroid 20mL
+  itemDescription: Slightly overclocks the muscles of your body. +20 ATK, +10 DEF,
+    -250 HP, +1 CritRate.
   itemIcon: {fileID: 0}
-  PerTurnDuration: 5
-  AddedHP: 0
-  AddedATK: 0
+  RarityValue: 1
+  PerTurnDuration: 0
+  particleEffect: {fileID: 0}
+  AddedHP: -250
+  AddedATK: 20
   AddedElemATK: 0
-  AddedCritRate: 0
-  AddedDEF: 5
+  AddedCritRate: 1
+  AddedDEF: 10
   AddedSPEED: 0

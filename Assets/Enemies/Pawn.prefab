@@ -247,6 +247,10 @@ MonoBehaviour:
   level: 0
   Drops:
   - {fileID: 11400000, guid: 5640161a1959bff4d8fb6cf5e68a65ee, type: 2}
+  - {fileID: 11400000, guid: 5d542704dc2e4614d8c519723057764f, type: 2}
+  - {fileID: 11400000, guid: 34091464709e5c34cb9a963276c53060, type: 2}
+  - {fileID: 11400000, guid: 2089997a1f03974458c8005a750db9b9, type: 2}
+  - {fileID: 11400000, guid: 146deab386b32054785822a72fee1251, type: 2}
 --- !u!33 &8145240173970011033
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -559,7 +559,7 @@ public class GameManager : MonoBehaviour
         if (item is ItemRemedyClass)
         {
             ItemRemedyClass remedy = item as ItemRemedyClass;
-            for (int i=0; i<6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 DoPlayerView();
                 switch (i)
@@ -567,37 +567,61 @@ public class GameManager : MonoBehaviour
                     case 0:
                         if (remedy.AddedHP == 0) break;
                         PlayerStats.HP += remedy.AddedHP;
-                        DisplayMessage("Your HP has increased!", true, 2);
+                        if (remedy.AddedHP > 0)
+                            if (PlayerStats.HP>PlayerStats.MaxHP)
+                            {
+                                PlayerStats.HP = PlayerStats.MaxHP;
+                                DisplayMessage($"You maxxed out your HP!", true, 2);
+                            }
+                            else
+                                DisplayMessage($"+{remedy.AddedHP} to your HP!", true, 2);
+                        else if (remedy.AddedHP < 0)
+                            DisplayMessage($"-{remedy.AddedHP} to your HP!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 1:
                         if (remedy.AddedDEF == 0) break;
                         PlayerStats.DEF += remedy.AddedDEF;
-                        DisplayMessage("Your DEF has increased!", true, 2);
+                        if (remedy.AddedDEF > 0)
+                            DisplayMessage($"+{remedy.AddedDEF} to your DEF!", true, 2);
+                        else if (remedy.AddedDEF < 0)
+                            DisplayMessage($"-{remedy.AddedDEF} to your DEF!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 2:
                         if (remedy.AddedATK == 0) break;
                         PlayerStats.ATK += remedy.AddedATK;
-                        DisplayMessage("Your ATK has increased!", true, 2);
+                        if (remedy.AddedATK > 0)
+                            DisplayMessage($"+{remedy.AddedATK} to your ATK!", true, 2);
+                        else if (remedy.AddedATK < 0)
+                            DisplayMessage($"-{remedy.AddedATK} to your ATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 3:
                         if (remedy.AddedElemATK == 0) break;
                         PlayerStats.ElemATK += remedy.AddedElemATK;
-                        DisplayMessage("Your Element ATK has increased!", true, 2);
+                        if (remedy.AddedElemATK > 0)
+                            DisplayMessage($"+{remedy.AddedElemATK} to your ElemATK!", true, 2);
+                        else if (remedy.AddedElemATK < 0)
+                            DisplayMessage($"-{remedy.AddedElemATK} to your ElemATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 4:
                         if (remedy.AddedCritRate == 0) break;
                         PlayerStats.CritRate += remedy.AddedCritRate;
-                        DisplayMessage("Your CritRate has increased!", true, 2);
+                        if (remedy.AddedCritRate > 0)
+                            DisplayMessage($"+{remedy.AddedCritRate} to your CritRate!", true, 2);
+                        else if (remedy.AddedCritRate < 0)
+                            DisplayMessage($"-{remedy.AddedCritRate} to your CritRate!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 5:
                         if (remedy.AddedSPEED == 0) break;
                         PlayerStats.Speed += remedy.AddedSPEED;
-                        DisplayMessage("Your SPEED has increased!", true, 2);
+                        if (remedy.AddedSPEED > 0)
+                            DisplayMessage($"+{remedy.AddedSPEED} to your Speed!", true, 2);
+                        else if (remedy.AddedSPEED < 0)
+                            DisplayMessage($"-{remedy.AddedSPEED} to your Speed!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                 }
@@ -607,7 +631,6 @@ public class GameManager : MonoBehaviour
 
         List<StatsSystem> enemyStats = new();
         foreach (GameObject enemy in CurEnemies) enemyStats.Add(enemy.GetComponentInChildren<StatsSystem>());
-        /*
         if (item is ItemInflictorClass)
         {
             ItemInflictorClass inflictor = item as ItemInflictorClass;
@@ -619,50 +642,67 @@ public class GameManager : MonoBehaviour
                     case 0:
                         if (inflictor.AddedHP == 0) break;
                         foreach (var enemy in enemyStats) enemy.HP = inflictor.AddedHP;
-                        DisplayMessage("Your HP has increased!", true);
+                        if (inflictor.AddedHP > 0)
+                            DisplayMessage($"+{inflictor.AddedHP} to your HP!", true, 2);
+                        else if (inflictor.AddedHP < 0)
+                            DisplayMessage($"-{inflictor.AddedHP} to your HP!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 1:
                         if (inflictor.AddedDEF == 0) break;
                         foreach (var enemy in enemyStats) enemy.DEF = inflictor.AddedDEF;
-                        DisplayMessage("Your DEF has increased!", true);
+                        if (inflictor.AddedDEF > 0)
+                            DisplayMessage($"+{inflictor.AddedDEF} to your DEF!", true, 2);
+                        else if (inflictor.AddedDEF < 0)
+                            DisplayMessage($"-{inflictor.AddedDEF} to your DEF!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 2:
                         if (inflictor.AddedATK == 0) break;
-                        foreach (var enemy in enemyStats) enemy.DEF = inflictor.;
-                        PlayerStats.ATK += inflictor.AddedATK;
-                        DisplayMessage("Your ATK has increased!", true);
+                        foreach (var enemy in enemyStats) enemy.ATK = inflictor.AddedATK;
+                        if (inflictor.AddedATK > 0)
+                            DisplayMessage($"+{inflictor.AddedATK} to your ATK!", true, 2);
+                        else if (inflictor.AddedATK < 0)
+                            DisplayMessage($"-{inflictor.AddedATK} to your ATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 3:
                         if (inflictor.AddedElemATK == 0) break;
-                        PlayerStats.ElemATK += inflictor.AddedElemATK;
-                        DisplayMessage("Your Element ATK has increased!", true);
+                        foreach (var enemy in enemyStats) enemy.ElemATK = inflictor.AddedElemATK;
+                        if (inflictor.AddedElemATK > 0)
+                            DisplayMessage($"+{inflictor.AddedElemATK} to your ElemATK!", true, 2);
+                        else if (inflictor.AddedElemATK < 0)
+                            DisplayMessage($"-{inflictor.AddedElemATK} to your ElemATK!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 4:
                         if (inflictor.AddedCritRate == 0) break;
-                        PlayerStats.CritRate += inflictor.AddedCritRate;
-                        DisplayMessage("Your CritRate has increased!", true);
+                        foreach (var enemy in enemyStats) enemy.CritRate = inflictor.AddedCritRate;
+                        if (inflictor.AddedCritRate > 0)
+                            DisplayMessage($"+{inflictor.AddedCritRate} to your CritRate!", true, 2);
+                        else if (inflictor.AddedCritRate < 0)
+                            DisplayMessage($"-{inflictor.AddedCritRate} to your CritRate!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                     case 5:
                         if (inflictor.AddedSPEED == 0) break;
-                        PlayerStats.Speed += inflictor.AddedSPEED;
-                        DisplayMessage("Your SPEED has increased!", true);
+                        foreach (var enemy in enemyStats) enemy.Speed = inflictor.AddedSPEED;
+                        if (inflictor.AddedSPEED > 0)
+                            DisplayMessage($"+{inflictor.AddedSPEED} to your Speed!", true, 2);
+                        else if (inflictor.AddedSPEED < 0)
+                            DisplayMessage($"-{inflictor.AddedSPEED} to your Speed!", false, 2);
                         yield return new WaitForSeconds(1.5f);
                         break;
                 }
             }
-        }*/
 
-        DoFirstPersonView();
-        HideChoicePanel(true);
-        HideAttackPanel(false);
-        ReloadAttackPanel(0);
-        DoFirstPersonView();
-        StartEnemyTurn();
+            DoFirstPersonView();
+            HideChoicePanel(true);
+            HideAttackPanel(false);
+            ReloadAttackPanel(0);
+            DoFirstPersonView();
+            StartEnemyTurn();
+        }
     }
 
     public void ShootMode(bool reloaded)
@@ -968,18 +1008,11 @@ public class GameManager : MonoBehaviour
         {
             AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
         }
-        StartCoroutine(StartEnemyTurnCorou());
+        StartEnemyTurnCorou();
     }
 
-    IEnumerator StartEnemyTurnCorou()
+    void StartEnemyTurnCorou()
     {
-        for (int i = 0; i < CurEnemies.Count; i++)
-        {
-            CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
-            CurEnemies[i].transform.GetChild(0).GetComponent<StatsSystem>().RestoreMaterial();
-            CurEnemies[i].transform.GetChild(0).GetComponent<EnemyAI>().DoStartTurn(i);
-            yield return new WaitForSeconds(1);
-        }
         for (int i = 0; i < CurEnemies.Count; i++)
         {
             if (CurEnemies[i] == null) continue;

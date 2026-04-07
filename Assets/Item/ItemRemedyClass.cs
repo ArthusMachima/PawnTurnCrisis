@@ -4,6 +4,7 @@ using UnityEngine;
 public class ItemRemedyClass : ItemClass
 {
     public int PerTurnDuration;
+    public GameObject particleEffect;
 
     [Header("Additive Effects")]
     public int AddedHP;

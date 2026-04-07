@@ -10,16 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Mint
+  m_Name: Wooden Plating
   m_EditorClassIdentifier: 
-  itemName: Mint
-  itemDescription: A piece of mint that soothes your soul. Heals 500HP
+  itemName: Wooden Plating
+  itemDescription: A broken piece of a wooden chess board that's conveniently shaped
+    like a plate. Wearing this reduces the impact from attacks. +10 DEF, -2 CritRate,
+    -3 Speed.
   itemIcon: {fileID: 0}
   RarityValue: 3
   PerTurnDuration: 0
-  AddedHP: 500
+  particleEffect: {fileID: 0}
+  AddedHP: 0
   AddedATK: 0
   AddedElemATK: 0
-  AddedCritRate: 0
-  AddedDEF: 0
-  AddedSPEED: 0
+  AddedCritRate: -2
+  AddedDEF: 10
+  AddedSPEED: -3

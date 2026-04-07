@@ -499,10 +499,13 @@ MonoBehaviour:
   type: 0
   level: 0
   Drops:
-  - {fileID: 11400000, guid: 5d542704dc2e4614d8c519723057764f, type: 2}
+  - {fileID: 11400000, guid: 01b6c93a35b960844981c03da219a32a, type: 2}
   - {fileID: 11400000, guid: 855e8464762aa8d48ab209f071e5f1d4, type: 2}
-  - {fileID: 11400000, guid: 5640161a1959bff4d8fb6cf5e68a65ee, type: 2}
-  - {fileID: 11400000, guid: 0618d1ad0aa1b044291f3e169db37d25, type: 2}
+  - {fileID: 11400000, guid: 8a96f95a0811ddf4890a2b6df6116ea0, type: 2}
+  - {fileID: 11400000, guid: ac36decfe1cc87e4184dab7f67cc3d66, type: 2}
+  - {fileID: 11400000, guid: efb4914d15a33aa4cb4c8bffe36d9097, type: 2}
+  - {fileID: 11400000, guid: bc0db3a6c09368042a5245bb5644a7a9, type: 2}
+  - {fileID: 11400000, guid: 146deab386b32054785822a72fee1251, type: 2}
 --- !u!33 &8145240173970011033
 MeshFilter:
   m_ObjectHideFlags: 0

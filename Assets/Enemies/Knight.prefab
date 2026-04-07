@@ -147,9 +147,14 @@ MonoBehaviour:
   type: 2
   level: 0
   Drops:
-  - {fileID: 11400000, guid: 5640161a1959bff4d8fb6cf5e68a65ee, type: 2}
   - {fileID: 11400000, guid: 0618d1ad0aa1b044291f3e169db37d25, type: 2}
-  - {fileID: 11400000, guid: 855e8464762aa8d48ab209f071e5f1d4, type: 2}
+  - {fileID: 11400000, guid: d271c6424585da9488a88bebd88e1f43, type: 2}
+  - {fileID: 11400000, guid: 8beab0ed41cfc7347b1af6384894b8ec, type: 2}
+  - {fileID: 11400000, guid: ac36decfe1cc87e4184dab7f67cc3d66, type: 2}
+  - {fileID: 11400000, guid: efb4914d15a33aa4cb4c8bffe36d9097, type: 2}
+  - {fileID: 11400000, guid: 65b528da83b814d4d9ee9d5ba993e74d, type: 2}
+  - {fileID: 11400000, guid: 11235070f23cf6746ba755daa7ad9b1f, type: 2}
+  - {fileID: 11400000, guid: 146deab386b32054785822a72fee1251, type: 2}
 --- !u!64 &3156024254244791989
 MeshCollider:
   m_ObjectHideFlags: 0

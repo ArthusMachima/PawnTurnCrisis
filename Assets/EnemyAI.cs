@@ -68,11 +68,12 @@ public class EnemyAI : MonoBehaviour
         GameManager.CurEnemies.Remove(gameObject.transform.parent.gameObject);
         GameManager.MovedEnemiesAmount++;
 
-        int chance = Random.Range(1, 3);
+        int randomItemPick = Random.Range(0, Drops.Length - 1);
+        int chance = Random.Range(1, Drops[randomItemPick].RarityValue);
         if (chance == 1)
         {
-            InventoryUI.Instance.PlayerInventory.Add(Drops[Random.Range(0, Drops.Length - 1)]);
-            GameManager.Instance.DisplayMessage($"You obtained {Drops[Random.Range(0, Drops.Length - 1)].itemName}!", false, 1);
+            InventoryUI.Instance.PlayerInventory.Add(Drops[randomItemPick]);
+            GameManager.Instance.DisplayMessage($"You obtained {Drops[randomItemPick].itemName}!", false, 1);
         }
     }
 
@@ -84,6 +85,7 @@ public class EnemyAI : MonoBehaviour
 
     IEnumerator StartTurn(int num)
     {
+        //Debug.LogWarning("TURN STARTED");
         yield return new WaitForSeconds(1+num);
         GameManager.doShootControls = true;
         float RandomTime;
@@ -95,7 +97,7 @@ public class EnemyAI : MonoBehaviour
 
                 while (MoveAmount > 0)
                 {
-
+                    //Debug.Log($"Moving in index {MoveAmount}");
                     int RandomPosition;
                     do
                     {

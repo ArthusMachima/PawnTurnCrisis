@@ -9,17 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Mint
+  m_Script: {fileID: 11500000, guid: 1968dd959a363114588e78179ddc1412, type: 3}
+  m_Name: Hypercalcemia
   m_EditorClassIdentifier: 
-  itemName: Mint
-  itemDescription: A piece of mint that soothes your soul. Heals 500HP
+  itemName: Hypercalcemia
+  itemDescription: Reduces enemy ATK at the expense of gaining DEF. -300 ATK, +20
+    DEF, -3 Speed
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 5
   PerTurnDuration: 0
-  AddedHP: 500
-  AddedATK: 0
+  particleEffect: {fileID: 0}
+  AddedHP: 0
+  AddedATK: -300
   AddedElemATK: 0
   AddedCritRate: 0
-  AddedDEF: 0
-  AddedSPEED: 0
+  AddedDEF: 20
+  AddedSPEED: -3

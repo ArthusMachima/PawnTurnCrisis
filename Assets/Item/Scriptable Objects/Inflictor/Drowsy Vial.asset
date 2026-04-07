@@ -9,16 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Adrenaline
+  m_Script: {fileID: 11500000, guid: 1968dd959a363114588e78179ddc1412, type: 3}
+  m_Name: Drowsy Vial
   m_EditorClassIdentifier: 
-  itemName: Adrenaline
-  itemDescription: Hightens your sense. +100 ATK for 5 turns
+  itemName: Drowsy Vial
+  itemDescription: Slows down enemies. -5 Speed.
   itemIcon: {fileID: 0}
-  PerTurnDuration: 5
+  RarityValue: 5
+  PerTurnDuration: 0
+  particleEffect: {fileID: 0}
   AddedHP: 0
-  AddedATK: 100
+  AddedATK: 0
   AddedElemATK: 0
   AddedCritRate: 0
   AddedDEF: 0
-  AddedSPEED: 0
+  AddedSPEED: -5

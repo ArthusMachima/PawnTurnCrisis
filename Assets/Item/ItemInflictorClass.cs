@@ -4,8 +4,9 @@ using UnityEngine;
 public class ItemInflictorClass : ItemClass
 {
     public int PerTurnDuration;
+    public GameObject particleEffect;
 
-    [Header("Additive Effects")]
+    [Header("Inflictor Effects")]
     public int AddedHP;
     public int AddedATK;
     public int AddedElemATK;

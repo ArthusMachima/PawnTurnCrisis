@@ -15,7 +15,8 @@ MonoBehaviour:
   itemName: Bite-sized Mint
   itemDescription: A small piece of mint that soothes your tongue. Heals 250HP
   itemIcon: {fileID: 0}
-  PerTurnDuration: 1
+  RarityValue: 1
+  PerTurnDuration: 0
   AddedHP: 250
   AddedATK: 0
   AddedElemATK: 0

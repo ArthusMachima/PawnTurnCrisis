@@ -10,16 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Mint
+  m_Name: Adrenaline 2mL
   m_EditorClassIdentifier: 
-  itemName: Mint
-  itemDescription: A piece of mint that soothes your soul. Heals 500HP
+  itemName: Adrenaline 2mL
+  itemDescription: A neuro drug from a sketchy brand that greatly hightens your sense
+    but may cause some side effects. +200 ATK, -100 HP, -10 DEF, +6 CritRate, +5
+    Speed
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 5
   PerTurnDuration: 0
-  AddedHP: 500
-  AddedATK: 0
+  particleEffect: {fileID: 0}
+  AddedHP: -100
+  AddedATK: 200
   AddedElemATK: 0
-  AddedCritRate: 0
-  AddedDEF: 0
-  AddedSPEED: 0
+  AddedCritRate: 6
+  AddedDEF: -10
+  AddedSPEED: 5

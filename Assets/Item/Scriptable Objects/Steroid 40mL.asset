@@ -10,16 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Mint
+  m_Name: Steroid 40mL
   m_EditorClassIdentifier: 
-  itemName: Mint
-  itemDescription: A piece of mint that soothes your soul. Heals 500HP
+  itemName: Steroid 40mL
+  itemDescription: Greatly overclocks the muscles of your body with severe consequences.
+    +100 ATK, +30 DEF, -990 HP, +3 CritRate.
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 5
   PerTurnDuration: 0
-  AddedHP: 500
-  AddedATK: 0
+  particleEffect: {fileID: 0}
+  AddedHP: -990
+  AddedATK: 100
   AddedElemATK: 0
-  AddedCritRate: 0
-  AddedDEF: 0
+  AddedCritRate: 3
+  AddedDEF: 30
   AddedSPEED: 0

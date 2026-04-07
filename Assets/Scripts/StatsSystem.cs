@@ -11,14 +11,13 @@ public class StatsSystem : MonoBehaviour
     [Header("Stats")]
     [SerializeField] private GameObject HPBar;
     [SerializeField] private TextMeshProUGUI HPNum;
-    [SerializeField] private int MaxHP = 1000;
+    public int MaxHP = 1000;
     [Range(0, 1000)] public int HP = 1000;
     public int DEF=1;
     public int ATK=100;
     public int ElemATK=100;
     public int CritRate=10;
     public int Speed=1;
-    public List<TempEffect> TempEffects = new();
 
     [Header("Reference")]
     [SerializeField] private GameObject DeathParticle;
