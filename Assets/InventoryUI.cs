@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
+    [SerializeField] AudioManager aud;
+
     [Header("Inventory System")]
     public List<ItemClass> PlayerInventory = new List<ItemClass>();
 
@@ -28,7 +30,14 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] float rot = 30;
     [SerializeField] float pos = 30;
 
-    
+
+    public static InventoryUI Instance;
+    private void OnEnable()
+    {
+        Instance = this;
+    }
+
+
 
     private void Start()
     {
@@ -40,24 +49,27 @@ public class InventoryUI : MonoBehaviour
     {
         if (isInventoryShown && Controlable)
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(3))
             {
                 GameManager.Instance.InventoryMode(false);
             }
 
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W) || Input.GetAxis("Mouse ScrollWheel") > 0f)
             {
+                aud.PlaySound(aud.SoundFX, aud.s_CylinderTurn);
                 HoverUp();
             }
 
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S) || Input.GetAxis("Mouse ScrollWheel") < 0f)
             {
+                aud.PlaySound(aud.SoundFX, aud.s_CylinderTurn);
                 HoverDown();
             }
 
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Z))
             {
                 Controlable = false;
+                aud.PlaySound(aud.SoundFX, aud.s_CritGunShot);
                 SelectItem();
             }
         }
@@ -96,7 +108,7 @@ public class InventoryUI : MonoBehaviour
     {
         if (PlayerInventory.Count != 0)
         {
-            StartCoroutine(GameManager.Instance.OnItemUsed());
+            StartCoroutine(GameManager.Instance.OnItemUsed(PlayerInventory[index]));
             ItemPanelGroup[index].gameObject.LeanMoveX(4000, 0.2f).setOnComplete(() =>
             {
                 ItemPanelGroup[index].transform.LeanMoveX(-3000, 0).setDelay(0.3f);

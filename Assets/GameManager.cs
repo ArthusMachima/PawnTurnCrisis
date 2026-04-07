@@ -2,111 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static ObjectAutoScaleEffect;
 using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
 
-    void HideAttackPanel(bool v)
-    {
-        if (v)
-        {
-            doShootControls = false;
-            AttackPanel.transform.LeanMoveX(Screen.width+(Screen.width/2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
-            {
-                AttackPanelCanvas.alpha = 0;
-            });
-            Cursor.visible = true;
-            SightCursor.SetActive(false);
-        }
-        else
-        {
-            AttackPanelCanvas.alpha = 1;
-            AttackPanel.transform.LeanMoveX(Screen.width-80, AnimationTime).setEaseOutQuint();
-            Cursor.visible = false;
-            SightCursor.SetActive(true);
-        }
-    }
-
-    void HideStatsPanel(bool v)
-    {
-        if (v)
-        {
-            StageInfo.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint();
-            StatsPanel.transform.LeanMoveX(-(Screen.width / 2), AnimationTime).setEaseOutQuint();
-            Cursor.visible = false;
-        }
-        else
-        {
-            StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
-            StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
-            Cursor.visible = true;
 
 
-            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
-            string diff = PlayerPrefs.GetInt("LVL", 2) switch
-            {
-                1 => "Easy",
-                2 => "Normal",
-                3 => "Hard",
-                _ => "Overclock"
-            };
-            DifficultyDisplay.text = diff;
-            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
-        }
-    }
 
-    void HideChoicePanel(bool v)
-    {
-        if (v)
-        {
-            doChoiceControls = false;
-            ChoicePanel.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
-            {
-                ChoicePanelCanvas.alpha = 0;
-            });
-        }
-        else
-        {
-            ChoicePanelCanvas.alpha = 1;
-            aud.PlaySound(aud.SoundFX, aud.s_ReloadGun);
-            ChoicePanel.transform.LeanMoveX(Screen.width-80, AnimationTime).setEaseOutQuint().setOnComplete(() =>
-            {
-                doChoiceControls = true;
-            });
-        }
-    }
-
-    void HideHighscorePanel(bool v)
-    {
-        if (v)
-        {
-            GameOverPanel.LeanMoveY((Screen.height*2)-(Screen.height/4), 1f).setEaseOutQuint();
-            LeanTween.value(gameObject, 20, 10, 0.5f)
-                .setOnUpdate(val =>
-                {
-                    Unsync.speed = val;
-                })
-                .setOnComplete(() => {
-                    GameOverCanvas.alpha = 0;
-                });
-        }
-        else
-        {
-            LeanTween.value(gameObject, 10, 20, 0.5f)
-                .setOnUpdate(val =>
-                {
-                    Unsync.speed = val;
-                })
-                .setOnComplete(() => {
-                    GameOverCanvas.alpha = 1;
-                    GameOverPanel.LeanMoveY(Screen.height - (Screen.height / 4), 1f).setEaseOutQuint();
-                });
-        }
-
-    }
+    [Header("Debug")]
+    [SerializeField] private bool BypassVentReq;
+    [SerializeField] private bool AvoidPlayerDamage;
 
     [Header("Debug - Panels")]
     [SerializeField] private float BulletDiagonalAmount;
@@ -220,7 +130,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ScoreCounterText;
     [SerializeField] private TextMeshProUGUI HighScoreCounter;
     [SerializeField] private int Score;
-    [SerializeField] private StatsSystem PlayerStats;
+    public StatsSystem PlayerStats;
     [SerializeField] private bool isPlayerAlive = true;
     [SerializeField] private GameObject StatsPanel;
     [SerializeField] private ConsoleText ConsoleText;
@@ -234,6 +144,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CanvasGroup GameOverCanvas;
     [SerializeField] private CanvasGroup ChoicePanelCanvas;
     [SerializeField] private CanvasGroup AttackPanelCanvas;
+    [SerializeField] private GameObject MessagePanel;
+    [SerializeField] private TextMeshProUGUI MessagePanelText;
 
     [Header("Choice Panel Properties")]
     [SerializeField] private GameObject ChoicePanel;
@@ -247,6 +159,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int HeldCalliber;
     [SerializeField] private int HeldCalliberMax = 10;
     [SerializeField] private TextMeshProUGUI VentButtonText;
+    [SerializeField] private GameObject StatsPanelHalo;
+    [SerializeField] private ObjectAutoScaleEffect AttackHalo;
+    [SerializeField] private GameObject ItemUseHalo;
 
     [Header("Attack Panel Properties")]
     [SerializeField] private GameObject AttackPanel;
@@ -273,7 +188,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float GameOverUIHideDistance;
     [SerializeField] private float GameOverHideUIOffset;
 
-
     [Header("Enemy Properties")]
     [SerializeField] private GameObject[] EnemyTypes;
     public List<GameObject> CurEnemies;
@@ -282,6 +196,25 @@ public class GameManager : MonoBehaviour
     public int MovedEnemiesAmount;
     [SerializeField] private int EnemyIndex;
     [SerializeField] private Vector3 EnemySpawnOffset;
+
+    [Header("Vent Properties")]
+    [SerializeField] GameObject VentPanel;
+    [SerializeField] Transform VentBar;
+    [SerializeField] bool VentModeControls;
+    [SerializeField] float VentDamage;
+    [SerializeField] GameObject UltExplosion;
+    [SerializeField] GameObject UltCharge;
+
+    [Header("Analyze Properties")]
+    [SerializeField] CanvasGroup AnalyzePanel;
+    [SerializeField] bool AnalyzeControls;
+    [SerializeField] TextMeshProUGUI PlayerStatsText;
+    [SerializeField] TextMeshProUGUI[] EnemyStatsText;
+
+
+
+
+
 
     public static GameManager Instance { get; internal set; }
     private void OnEnable()
@@ -316,7 +249,6 @@ public class GameManager : MonoBehaviour
             //ListDown
             if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S) || Input.GetAxis("Mouse ScrollWheel") < 0f)
             {
-
                 ChangeList("down");
             }
 
@@ -330,20 +262,34 @@ public class GameManager : MonoBehaviour
                 {
                     case 0:
                         {
-                            Debug.Log("Guard");
+                            if (HeldCalliber==HeldCalliberMax|| BypassVentReq)
+                            {
+                                VentMode();
+                                HeldCalliber = 0;
+                            }
+                            else
+                            {
+                                DisplayMessage("Not enough Held Calliber! End turn with remaining bullets to obtain some.", false, 2);
+                                aud.PlaySound(aud.SoundFX, aud.s_NoBullets);
+                            }
                             break;
                         }
                     case 1:
                         {
-                            Debug.Log("Negotiate");
+                            AnalyzeMode(true);
                             break;
                         }
                     case 2:
                         {
-                            InventoryMode(true);
+                            NegotiateMode(true);
                             break;
                         }
                     case 3:
+                        {
+                            InventoryMode(true);
+                            break;
+                        }
+                    case 4:
                         {
                             ShootMode(true);
                             break;
@@ -358,6 +304,7 @@ public class GameManager : MonoBehaviour
         {
             if (PlayerStats.HP<=0 && isPlayerAlive)
             {
+                StopAllCoroutines();
                 c_GameOver ??= StartCoroutine(GameOver());
                 doShootControls = false;
                 isPlayerAlive = false;
@@ -373,7 +320,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    EndTurn();
+                    if (isPlayerAlive) EndTurn();
                 }
             }
 
@@ -387,7 +334,7 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(ShootEffect());
                 } else
                 {
-                    Debug.Log("Out of Ammo!");
+                    aud.PlaySound(aud.SoundFX, aud.s_NoBullets);
                 }
 
             }
@@ -398,12 +345,63 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        //Vent Controls
+        if (VentModeControls)
+        {
+            VentBar.localScale = new(VentDamage/1000, 1, 1);
+            ColorBleed.intensity = (VentDamage/1000)*100;
+            ColorBleed.shift = Mathf.Lerp(ColorBleed.shift, 0.02f, 0.1f);
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            {
+                //Bar and Screen VFXs
+                if (VentDamage<1000) VentDamage += Random.Range(10, 30);
+                ColorBleed.shift = Random.Range(-0.5f*(VentDamage/1000)*2, 0.5f* (VentDamage / 1000) * 2);
+
+                //Muzzle Effect
+                aud.PlaySound(aud.SoundFX, aud.s_UltShot);
+
+                var muzzleflash = Instantiate(MuzzleFlash);
+                var cursorTransform = SightCursor.transform;
+                muzzleflash.transform.SetParent(cursorTransform.parent, false);
+
+                if (SightCursor.TryGetComponent<RectTransform>(out var cursorRT) &&
+                    muzzleflash.TryGetComponent<RectTransform>(out var muzzleRT))
+                {
+                    muzzleRT.localRotation = Quaternion.identity;
+                    muzzleRT.anchoredPosition = cursorRT.anchoredPosition;
+                    muzzleRT.SetAsLastSibling();
+                }
+                else
+                {
+                    muzzleflash.transform.SetPositionAndRotation(cursorTransform.position, cursorTransform.rotation);
+                }
+            }
+        }
+
+        if (AnalyzeControls)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetMouseButtonDown(3))
+            {
+                AnalyzeMode(false);
+            }
+        }
 
         //Variable Syncing
         ScoreCounterText.text = "Score: " + Score;
         Shooter.doShoot = doShootControls;
         VentButtonText.text = "VENT ("+HeldCalliber+"/"+HeldCalliberMax+")";
     }
+
+
+
+    private void FixedUpdate()
+    {
+        if (VentModeControls)
+        {
+            if (VentDamage > 0) VentDamage -= Random.Range(1, 3);
+        }
+    }
+
 
 
     private void Start()
@@ -420,31 +418,256 @@ public class GameManager : MonoBehaviour
 
         c_Intro = StartCoroutine(Intro());
         ColorBleed = Camera.main.gameObject.GetComponent<ShaderEffect_BleedingColors>();
-        HighScoreCounter.text = "HIGHSCORE: "+ScoreSystem.GetHighestScoreString();
+        HighScoreCounter.text = "HIGHSCORE: " + ScoreSystem.GetHighestScoreString();
+        MessagePanel.LeanScaleY(0, 0);
     }
 
 
 
-    //Choice Panel Methods
-
-    public IEnumerator OnItemUsed()
+    //Panels
+    void HideAttackPanel(bool v)
     {
+        if (v)
+        {
+            doShootControls = false;
+            AttackPanel.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            {
+                AttackPanelCanvas.alpha = 0;
+            });
+            Cursor.visible = true;
+            SightCursor.SetActive(false);
+        }
+        else
+        {
+            AttackPanelCanvas.alpha = 1;
+            AttackPanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            Cursor.visible = false;
+            SightCursor.SetActive(true);
+        }
+    }
+
+    void HideStatsPanel(bool v)
+    {
+        if (v)
+        {
+            StageInfo.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint();
+            StatsPanel.transform.LeanMoveX(-(Screen.width / 2), AnimationTime).setEaseOutQuint();
+            Cursor.visible = false;
+        }
+        else
+        {
+            StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
+            Cursor.visible = true;
+
+
+            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
+            string diff = PlayerPrefs.GetInt("LVL", 2) switch
+            {
+                1 => "Easy",
+                2 => "Normal",
+                3 => "Hard",
+                _ => "Overclock"
+            };
+            DifficultyDisplay.text = diff;
+            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
+        }
+    }
+
+    void HideChoicePanel(bool v)
+    {
+        if (v)
+        {
+            doChoiceControls = false;
+            ChoicePanel.transform.LeanMoveX(Screen.width + (Screen.width / 2), AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            {
+                ChoicePanelCanvas.alpha = 0;
+            });
+        }
+        else
+        {
+            AttackHalo.autoScaleType = AutoScaleType.Grow;
+            AttackHalo.gameObject.SetActive(true);
+            ChoicePanelCanvas.alpha = 1;
+            aud.PlaySound(aud.SoundFX, aud.s_ReloadGun);
+            ChoicePanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            {
+                doChoiceControls = true;
+            });
+            StartCoroutine(CheckCurEnemy());
+        }
+    }
+
+    void HideHighscorePanel(bool v)
+    {
+        if (v)
+        {
+            GameOverPanel.LeanMoveY((Screen.height * 2) - (Screen.height / 4), 1f).setEaseOutQuint();
+            LeanTween.value(gameObject, 20, 10, 0.5f)
+                .setOnUpdate(val =>
+                {
+                    Unsync.speed = val;
+                })
+                .setOnComplete(() => {
+                    GameOverCanvas.alpha = 0;
+                });
+        }
+        else
+        {
+            LeanTween.value(gameObject, 10, 20, 0.5f)
+                .setOnUpdate(val =>
+                {
+                    Unsync.speed = val;
+                })
+                .setOnComplete(() => {
+                    GameOverCanvas.alpha = 1;
+                    GameOverPanel.LeanMoveY(Screen.height - (Screen.height / 4), 1f).setEaseOutQuint();
+                });
+        }
+
+    }
+
+    IEnumerator CheckCurEnemy()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (CurEnemies.Count == 0)
+        {
+            EndWave();
+        }
+    }
+    
+
+
+    //Choice Panel Methods
+    public void DisplayMessage(string msg, bool good, float time)
+    {
+        LeanTween.cancel(MessagePanel);
+        if (good) aud.PlaySound(aud.SoundFX, aud.s_DisplayGoodMessage);
+        else      aud.PlaySound(aud.SoundFX, aud.s_DisplayBadMessage);
+        MessagePanelText.text = msg;
+        MessagePanel.LeanScaleY(0, 0).setOnComplete(() =>
+        {
+            MessagePanel.LeanScaleY(1, 0.3f).setEaseOutQuint().setOnComplete(() =>
+            {
+                MessagePanel.LeanScaleY(0, 0.3f).setEaseOutQuint().setDelay(time);
+            });
+        });
+    }
+
+    public IEnumerator OnItemUsed(ItemClass item)
+    {
+        ItemUseHalo.SetActive(true);
+        HideStatsPanel(false);
         InvUI.ShowInventory(false);
         yield return new WaitForSeconds(0.5f);
-        HideStatsPanel(false);
+
+        if (item is ItemRemedyClass)
+        {
+            ItemRemedyClass remedy = item as ItemRemedyClass;
+            for (int i=0; i<6; i++)
+            {
+                DoPlayerView();
+                switch (i)
+                {
+                    case 0:
+                        if (remedy.AddedHP == 0) break;
+                        PlayerStats.HP += remedy.AddedHP;
+                        DisplayMessage("Your HP has increased!", true, 2);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 1:
+                        if (remedy.AddedDEF == 0) break;
+                        PlayerStats.DEF += remedy.AddedDEF;
+                        DisplayMessage("Your DEF has increased!", true, 2);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 2:
+                        if (remedy.AddedATK == 0) break;
+                        PlayerStats.ATK += remedy.AddedATK;
+                        DisplayMessage("Your ATK has increased!", true, 2);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 3:
+                        if (remedy.AddedElemATK == 0) break;
+                        PlayerStats.ElemATK += remedy.AddedElemATK;
+                        DisplayMessage("Your Element ATK has increased!", true, 2);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 4:
+                        if (remedy.AddedCritRate == 0) break;
+                        PlayerStats.CritRate += remedy.AddedCritRate;
+                        DisplayMessage("Your CritRate has increased!", true, 2);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 5:
+                        if (remedy.AddedSPEED == 0) break;
+                        PlayerStats.Speed += remedy.AddedSPEED;
+                        DisplayMessage("Your SPEED has increased!", true, 2);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                }
+            }
+        }
+
+
+
+        List<StatsSystem> enemyStats = new();
+        foreach (GameObject enemy in CurEnemies) enemyStats.Add(enemy.GetComponentInChildren<StatsSystem>());
+        /*
+        if (item is ItemInflictorClass)
+        {
+            ItemInflictorClass inflictor = item as ItemInflictorClass;
+            for (int i = 0; i < 6; i++)
+            {
+                DoPlayerView();
+                switch (i)
+                {
+                    case 0:
+                        if (inflictor.AddedHP == 0) break;
+                        foreach (var enemy in enemyStats) enemy.HP = inflictor.AddedHP;
+                        DisplayMessage("Your HP has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 1:
+                        if (inflictor.AddedDEF == 0) break;
+                        foreach (var enemy in enemyStats) enemy.DEF = inflictor.AddedDEF;
+                        DisplayMessage("Your DEF has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 2:
+                        if (inflictor.AddedATK == 0) break;
+                        foreach (var enemy in enemyStats) enemy.DEF = inflictor.;
+                        PlayerStats.ATK += inflictor.AddedATK;
+                        DisplayMessage("Your ATK has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 3:
+                        if (inflictor.AddedElemATK == 0) break;
+                        PlayerStats.ElemATK += inflictor.AddedElemATK;
+                        DisplayMessage("Your Element ATK has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 4:
+                        if (inflictor.AddedCritRate == 0) break;
+                        PlayerStats.CritRate += inflictor.AddedCritRate;
+                        DisplayMessage("Your CritRate has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                    case 5:
+                        if (inflictor.AddedSPEED == 0) break;
+                        PlayerStats.Speed += inflictor.AddedSPEED;
+                        DisplayMessage("Your SPEED has increased!", true);
+                        yield return new WaitForSeconds(1.5f);
+                        break;
+                }
+            }
+        }*/
+
         DoFirstPersonView();
         HideChoicePanel(true);
         HideAttackPanel(false);
         ReloadAttackPanel(0);
-
-        int effectAmount = 3;
-        for (int i=0; i<effectAmount; i++)
-        {
-            //Insert effect logic here
-            Debug.Log("ITEM USED!! *insert item effect here*");
-            yield return new WaitForSeconds(1f);
-        }
-
+        DoFirstPersonView();
         StartEnemyTurn();
     }
 
@@ -458,12 +681,15 @@ public class GameManager : MonoBehaviour
         if (reloaded) ReloadAttackPanel(6);
         else ReloadAttackPanel(0);
         StartEnemyTurn();
+        AttackHalo.autoScaleType = AutoScaleType.Shrink;
+        AttackHalo.gameObject.SetActive(true);
     }
 
     public void InventoryMode(bool show)
     {
         if (show)
         {
+            InvUI.gameObject.SetActive(true);
             InvUI.ShowInventory(true);
             HideChoicePanel(true);
             HideStatsPanel(true);
@@ -480,7 +706,38 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         HideChoicePanel(false);
         HideStatsPanel(false);
-        StartUpChoicePanel();
+        StartUpChoicePanel(false);
+        InvUI.gameObject.SetActive(false);
+    }
+
+    public void NegotiateMode(bool show)
+    {
+        NegotiateUI.Instance.gameObject.SetActive(show);
+        NegotiateUI.Instance.ShowNegotiatePanel = show;
+        if (show)
+        {
+            StatsPanelHalo.SetActive(true);
+            Cursor.visible = false;
+            SightCursor.SetActive(true);
+            HideChoicePanel(true);
+            HideStatsPanel(true);
+            DoNegotiateView();
+        }
+        else
+        {
+            StartCoroutine(delayedNegotiateHide());
+        }
+    }
+
+    IEnumerator delayedNegotiateHide()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Cursor.visible = true;
+        SightCursor.SetActive(false);
+        HideChoicePanel(false);
+        HideStatsPanel(false);
+        DoCinemaView();
+        StartUpChoicePanel(false);
     }
 
     void ChangeList(string direction)
@@ -535,7 +792,7 @@ public class GameManager : MonoBehaviour
 
         //List Movement
         LeanTween.cancel(List);
-        List.transform.LeanMoveLocalY(-160 + (ChoiceIndex * 80), AnimationTime).setEaseOutQuint();
+        List.transform.LeanMoveLocalY(-240 + (ChoiceIndex * 80), AnimationTime).setEaseOutQuint();
 
 
     }
@@ -552,7 +809,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void StartUpChoicePanel()
+    void StartUpChoicePanel(bool reload)
     {
         for (int i = 0; i <= ChoiceBulletAmount; i++)
         {
@@ -560,10 +817,129 @@ public class GameManager : MonoBehaviour
             ChoiceButton[i].transform.LeanMoveLocalX(ChoiceButtonPos[i] * BulletDiagonalAmount, AnimationTime).setEaseOutQuint();
         }
 
-        HeldCalliber += ClipIndex;
-        if (HeldCalliber>HeldCalliberMax)
-            HeldCalliber = HeldCalliberMax;
+        if (reload)
+        {
+            HeldCalliber += ClipIndex;
+            if (HeldCalliber > HeldCalliberMax)
+                HeldCalliber = HeldCalliberMax;
+        }
+    }
 
+    void VentMode()
+    {
+        AttackHalo.autoScaleType = AutoScaleType.Grow;
+        AttackHalo.gameObject.SetActive(true);
+        VentDamage = 0;
+        ClipIndex = 0;
+        VentPanel.SetActive(true);
+        HideChoicePanel(true);
+        HideStatsPanel(true);
+        DoFirstPersonView();
+        StartCoroutine(VentTimer());
+        VentModeControls = true;
+        aud.PlaySound(aud.SoundFX, aud.s_Ult);
+        Cursor.visible = false;
+        SightCursor.SetActive(true);
+    }
+
+    IEnumerator VentTimer()
+    {
+        List<StatsSystem> enemyStats = new();
+        foreach (GameObject enemy in CurEnemies)
+        {
+            enemyStats.Add(enemy.GetComponentInChildren<StatsSystem>());
+        }
+
+
+        yield return new WaitForSeconds(2f);
+        Instantiate(UltCharge, ViewPoints[2].position, Quaternion.identity);
+        yield return new WaitForSeconds(0.5f);
+        Instantiate(UltCharge, ViewPoints[0].position, Quaternion.identity);
+        yield return new WaitForSeconds(0.5f);
+
+
+        VentModeControls = false;
+        for (int i = 0; i < 8; i++) Instantiate(UltExplosion, (ViewPoints[0].position) + new Vector3(ViewPoints[0].position.x, Random.Range(-1, 1), Random.Range(-4, 4)), Quaternion.identity);
+        aud.PlaySound(aud.SoundFX, aud.s_UltExplosion);
+        foreach (StatsSystem stats in enemyStats) stats.TakeDamage((int)VentDamage);
+        VentPanel.SetActive(false);
+        DoCinemaView();
+        ColorBleed.intensity = 100;
+        ColorBleed.shift = 0.3f;
+        LeanTween.value(gameObject, ColorBleed.shift, 0.02f, 1f)
+            .setOnUpdate((float val) => ColorBleed.shift = val);
+
+        LeanTween.value(gameObject, ColorBleed.intensity, 10f, 1f)
+            .setOnUpdate((float val) => ColorBleed.intensity = val);
+
+        yield return new WaitForSeconds(1);
+        AttackHalo.autoScaleType = AutoScaleType.Grow;
+        AttackHalo.gameObject.SetActive(true);
+        HideChoicePanel(false);
+        HideStatsPanel(false);
+        if (CurEnemies.Count == 0)
+        {
+            EndWave();
+        }
+        else
+        {
+            StartUpChoicePanel(true);
+        }
+    }
+
+    void AnalyzeMode(bool show)
+    {
+        if (show)
+        {
+            AnalyzeControls = true;
+            DoLandscapeView();
+            PlayerStatsText.text = 
+                $"HP: {PlayerStats.HP}/1000\r\n" +
+                $"ATK: {PlayerStats.ATK}\r\n" +
+                $"ElemATK: {PlayerStats.ElemATK}\r\n" +
+                $"CritRate: {PlayerStats.CritRate}%\r\n" +
+                $"DEF: {PlayerStats.DEF}\r\n" +
+                $"SPEED: {PlayerStats.Speed}\r\n";
+
+            int i = 0;
+            foreach (GameObject enemy in CurEnemies)
+            {
+                StatsSystem stats = enemy.GetComponentInChildren<StatsSystem>();
+                EnemyStatsText[i].gameObject.SetActive(true);
+                EnemyStatsText[i].text =
+                $"HP: {stats.HP}\r\n" +
+                $"ATK: {stats.ATK}\r\n" +
+                $"ElemATK: {stats.ElemATK}\r\n" +
+                $"CritRate: {stats.CritRate}%\r\n" +
+                $"DEF: {stats.DEF}\r\n" +
+                $"SPEED: {stats.Speed}\r\n";
+                i++;
+            }
+
+            LeanTween.value(gameObject, AnalyzePanel.alpha, 1, 0.2f)
+            .setOnUpdate((float val) => AnalyzePanel.alpha = val);
+            HideChoicePanel(true);
+            HideStatsPanel(true);
+        }
+        else
+        {
+            AnalyzeControls = false;
+            LeanTween.value(gameObject, AnalyzePanel.alpha, 0, 0.2f)
+            .setOnUpdate((float val) => AnalyzePanel.alpha = val).setOnComplete(() =>
+            {
+                foreach (var text in EnemyStatsText) text.gameObject.SetActive(false);
+            });
+            StartCoroutine(delayedAnalyzeHide());
+        }
+    }
+
+    IEnumerator delayedAnalyzeHide()
+    {
+        yield return new WaitForSeconds(0.5f);
+        HideChoicePanel(false);
+        HideStatsPanel(false);
+        DoCinemaView();
+        StartUpChoicePanel(false);
     }
 
 
@@ -581,7 +957,7 @@ public class GameManager : MonoBehaviour
         {
             aud.PlaySound(aud.SoundFX, aud.s_EnemyBash);
             Debug.Log("Player took "+dmg+" dmg!!!");
-            PlayerStats.TakeDamage(dmg);
+            if (!AvoidPlayerDamage) PlayerStats.TakeDamage(dmg);
             StartCoroutine(Damaged());
             if (criticalhit)
             {
@@ -595,15 +971,16 @@ public class GameManager : MonoBehaviour
     {
         MovingEnemiesAmount = CurEnemies.Count;
         MovedEnemiesAmount = 0;
-        for (int i = 0; i < CurEnemies.Count; i++)
-        {
-            CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
-            CurEnemies[i].transform.GetChild(0).GetComponent<StatsSystem>().RestoreMaterial();
-            CurEnemies[i].transform.GetChild(0).GetComponent<EnemyAI>().DoStartTurn();
-        }
         for (int i = 0; i < AllEnemies.Count; i++)
         {
             AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+        }
+        for (int i = 0; i < CurEnemies.Count; i++)
+        {
+            if (CurEnemies[i] == null) continue;
+            CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
+            CurEnemies[i].transform.GetChild(0).GetComponent<StatsSystem>().RestoreMaterial();
+            CurEnemies[i].transform.GetChild(0).GetComponent<EnemyAI>().DoStartTurn(i);
         }
     }
 
@@ -652,7 +1029,7 @@ public class GameManager : MonoBehaviour
         HideAttackPanel(true);
         DoCinemaView();
         HideChoicePanel(false);
-        StartUpChoicePanel();
+        StartUpChoicePanel(true);
         for (int i = 0; i < CurEnemies.Count; i++)
         {
             CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
@@ -743,35 +1120,6 @@ public class GameManager : MonoBehaviour
         ColorBleed.shift = 0.01f;
     }
 
-    IEnumerator ShootEffect()
-    {
-        aud.PlaySound(aud.SoundFX, aud.s_GunShot);
-
-        ColorBleed.intensity = Random.Range(5f, 50f);
-        ColorBleed.shift = Random.Range(0f, 0.1f);
-
-        var muzzleflash = Instantiate(MuzzleFlash);
-        var cursorTransform = SightCursor.transform;
-        muzzleflash.transform.SetParent(cursorTransform.parent, false);
-
-        if (SightCursor.TryGetComponent<RectTransform>(out var cursorRT) &&
-            muzzleflash.TryGetComponent<RectTransform>(out var muzzleRT))
-        {
-            muzzleRT.localRotation = Quaternion.identity;
-            muzzleRT.anchoredPosition = cursorRT.anchoredPosition;
-            muzzleRT.SetAsLastSibling();
-        }
-        else
-        {
-            muzzleflash.transform.SetPositionAndRotation(cursorTransform.position, cursorTransform.rotation);
-        }
-
-        yield return new WaitForSeconds(0.1f);
-
-        ColorBleed.intensity = 10;
-        ColorBleed.shift = 0.01f;
-    }
-
     void CinematizedHideWaveAndScore(bool v)
     {
         LeanTween.cancel(ScoreCounterOnCinematize.gameObject);
@@ -831,7 +1179,6 @@ public class GameManager : MonoBehaviour
 
 
 
-
     //Attack Panel Methods
     void AttackShoot()
     {
@@ -853,6 +1200,35 @@ public class GameManager : MonoBehaviour
 
             Clip.transform.LeanMoveLocalY(ClipOffset + (ClipIndex * 80), AnimationTime).setEaseOutQuint();
         }
+    }
+
+    IEnumerator ShootEffect()
+    {
+        aud.PlaySound(aud.SoundFX, aud.s_GunShot);
+
+        ColorBleed.intensity = Random.Range(5f, 50f);
+        ColorBleed.shift = Random.Range(0f, 0.1f);
+
+        var muzzleflash = Instantiate(MuzzleFlash);
+        var cursorTransform = SightCursor.transform;
+        muzzleflash.transform.SetParent(cursorTransform.parent, false);
+
+        if (SightCursor.TryGetComponent<RectTransform>(out var cursorRT) &&
+            muzzleflash.TryGetComponent<RectTransform>(out var muzzleRT))
+        {
+            muzzleRT.localRotation = Quaternion.identity;
+            muzzleRT.anchoredPosition = cursorRT.anchoredPosition;
+            muzzleRT.SetAsLastSibling();
+        }
+        else
+        {
+            muzzleflash.transform.SetPositionAndRotation(cursorTransform.position, cursorTransform.rotation);
+        }
+
+        yield return new WaitForSeconds(0.1f);
+
+        ColorBleed.intensity = 10;
+        ColorBleed.shift = 0.01f;
     }
 
     void ReloadAttackPanel(int bullet)
@@ -896,7 +1272,7 @@ public class GameManager : MonoBehaviour
         Tonfa.transform.LeanRotateZ(0, 0.2f).setEaseInQuart();
         yield return new WaitForSeconds(0.1f);
         isParrying = false;
-        yield return new WaitForSeconds(0.4f); //Cooldown
+        yield return new WaitForSeconds(0.4f*(10/(9+PlayerStats.Speed))); //Cooldown
         c_Parry = null;
     }
 
@@ -920,6 +1296,36 @@ public class GameManager : MonoBehaviour
 
 
     //Camera Methods
+    public void DoNegotiateView()
+    {
+        if (c_CinemaView != null) StopCoroutine(c_CinemaView);
+        CamFollow.doFollow = true;
+        CamLookAt.doLook = true;
+        CamFollow.SetPos(DynamicPositionPoints[7]);
+        CamLookAt.SetLook(ViewPoints[2]);
+        CamFollow.SetSpeed(LandscapeViewSpeed);
+    }
+
+    public void DoPlayerView()
+    {
+        if (c_CinemaView != null) StopCoroutine(c_CinemaView);
+        CamFollow.doFollow = true;
+        CamLookAt.doLook = true;
+        CamFollow.SetPos(StaticPositionPoints[6]);
+        CamLookAt.SetLook(StaticPositionPoints[0]);
+        CamFollow.SetSpeed(CinemaViewSpeed);
+    }
+
+    public void DoEnemyView()
+    {
+        if (c_CinemaView != null) StopCoroutine(c_CinemaView);
+        CamFollow.doFollow = true;
+        CamLookAt.doLook = true;
+        CamFollow.SetPos(StaticPositionPoints[6]);
+        CamLookAt.SetLook(ViewPoints[2]);
+        CamFollow.SetSpeed(CinemaViewSpeed);
+    }
+
     public void DoLandscapeView()
     {
         if (c_CinemaView!=null) StopCoroutine(c_CinemaView);
@@ -1107,9 +1513,11 @@ public class GameManager : MonoBehaviour
         HideHighscorePanel(true);
         
         index = 0;
+        ColorBleed.shift = 0.02f;
+        ColorBleed.intensity = 10;
         ChoicePanel.transform.LeanMoveX(RightPanelHideDistance + RightPanelHideOffset, AnimationTime).setEaseOutQuint().setOnComplete(() =>
         {
-            StartUpChoicePanel();
+            StartUpChoicePanel(true);
         });
 
         SpawnEnemies();
@@ -1161,7 +1569,6 @@ public class GameManager : MonoBehaviour
         HideChoicePanel(false);
         HideStatsPanel(false);
     }
-
 
 
 

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3784e0c696b93374aa0148870e5e35fe, type: 3}
-  m_Name: Mint
+  m_Name: Bite-sized Mint
   m_EditorClassIdentifier: 
-  itemName: Mint
-  itemDescription: A piece of mint that soothes your soul. Heals 500HP
+  itemName: Bite-sized Mint
+  itemDescription: A small piece of mint that soothes your tongue. Heals 250HP
   itemIcon: {fileID: 0}
   PerTurnDuration: 1
-  AddedHP: 500
+  AddedHP: 250
   AddedATK: 0
   AddedElemATK: 0
   AddedCritRate: 0

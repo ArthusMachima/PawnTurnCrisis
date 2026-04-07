@@ -7,7 +7,8 @@ public class ObjectAutoScaleEffect : MonoBehaviour
     [SerializeField] float ScaleRate = 0.1f;
     [SerializeField] Vector3 og_size;
     [SerializeField] UnityEvent onEffectComplete;
-    [SerializeField] AutoScaleType autoScaleType;
+    public AutoScaleType autoScaleType;
+    public bool KeepObjectActive=false;
 
     public enum AutoScaleType
     {
@@ -25,7 +26,7 @@ public class ObjectAutoScaleEffect : MonoBehaviour
                 transform.LeanScale(Vector3.zero, ScaleRate).setOnComplete(() =>
                 {
                     onEffectComplete?.Invoke();
-                    gameObject.SetActive(false);
+                    if (!KeepObjectActive) gameObject.SetActive(false);
                 });
                 break;
             case AutoScaleType.Grow:
@@ -33,7 +34,7 @@ public class ObjectAutoScaleEffect : MonoBehaviour
                 transform.LeanScale(og_size, ScaleRate).setOnComplete(() =>
                 {
                     onEffectComplete?.Invoke();
-                    gameObject.SetActive(false);
+                    if (!KeepObjectActive) gameObject.SetActive(false);
                 });
                 break;
         }

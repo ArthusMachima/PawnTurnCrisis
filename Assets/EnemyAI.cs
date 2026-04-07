@@ -7,7 +7,7 @@ public class EnemyAI : MonoBehaviour
 {
 
     [Header("Enemy Properties")]
-    [SerializeField] private StatsSystem StatsSystem;
+    public StatsSystem statsSystem;
     [SerializeField] private GameManager GameManager;
     [SerializeField] private Transform[] Movepoint;
     [SerializeField] private int MoveAmount = 0;
@@ -21,15 +21,17 @@ public class EnemyAI : MonoBehaviour
     [Header("Type Properties")]
     [SerializeField] private int type;
     public int level;
-    [SerializeField] private int Damage;
-    [SerializeField] private int CritRate;
+    [SerializeField] ItemClass[] Drops;
 
     private void Start()
     {
         LVLText.text = "LVL "+level;
         LVLText.gameObject.SetActive(false);
         GameManager = FindObjectOfType<GameManager>();
-        StatsSystem = GetComponent<StatsSystem>();
+        statsSystem = GetComponent<StatsSystem>();
+        statsSystem.DEF = Random.Range(1, level + 1);
+        statsSystem.ATK = Random.Range(100, 100+(100*level)/4);
+        statsSystem.CritRate = Random.Range(10, 10 + (10 * level) / 4);
         aud = FindAnyObjectByType<AudioManager>();
 
         Movepoint[5] = GameObject.Find("Player").transform;
@@ -44,9 +46,9 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        if (StatsSystem.Damaged != previousDamagedState)
+        if (statsSystem.Damaged != previousDamagedState)
         {
-            if (StatsSystem.Damaged)
+            if (statsSystem.Damaged)
             {
                 GameManager.AddScore("EnemyShot");
             }
@@ -56,7 +58,7 @@ public class EnemyAI : MonoBehaviour
             }
 
             // Update the previous state
-            previousDamagedState = StatsSystem.Damaged;
+            previousDamagedState = statsSystem.Damaged;
         }
     }
 
@@ -65,17 +67,24 @@ public class EnemyAI : MonoBehaviour
         IdleModle.SetActive(false);
         GameManager.CurEnemies.Remove(gameObject.transform.parent.gameObject);
         GameManager.MovedEnemiesAmount++;
+
+        int chance = Random.Range(1, 3);
+        if (chance == 1)
+        {
+            InventoryUI.Instance.PlayerInventory.Add(Drops[Random.Range(0, Drops.Length - 1)]);
+            GameManager.Instance.DisplayMessage($"You obtained {Drops[Random.Range(0, Drops.Length - 1)].itemName}!", false, 1);
+        }
     }
 
 
-    public void DoStartTurn()
+    public void DoStartTurn(int num)
     {
-        StartCoroutine(StartTurn());
+        StartCoroutine(StartTurn(num));
     }
 
-    IEnumerator StartTurn()
+    IEnumerator StartTurn(int num)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1+num);
         GameManager.doShootControls = true;
         float RandomTime;
 
@@ -94,25 +103,25 @@ public class EnemyAI : MonoBehaviour
                     } while (RandomPosition == prev_Point);
                     prev_Point = RandomPosition;
 
-                    RandomTime = Random.Range(0.5f / (float)PlayerPrefs.GetInt("LVL", 2), 2f / (float)PlayerPrefs.GetInt("LVL", 2));
+                    RandomTime = Random.Range(0.5f * statsSystem.Speed, 1 * statsSystem.Speed);
                     MoveTo(RandomPosition, RandomTime, false);
                     yield return new WaitForSeconds(RandomTime);
                     MoveAmount--;
                 }
 
-                MoveTo(5, 0.5f / (float)PlayerPrefs.GetInt("LVL", 2), true);
-                yield return new WaitForSeconds(0.5f / (float)PlayerPrefs.GetInt("LVL", 2));
+                MoveTo(5 * statsSystem.Speed, 0.5f*statsSystem.Speed, true);
+                yield return new WaitForSeconds(0.5f);
                 int critChance = Random.Range(1, 101);
-                if (critChance <= CritRate)
+                if (critChance <= statsSystem.CritRate)
                 {
                     Debug.Log("Queen Critical Hit!!!");
-                    float trueDamage = (Damage * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+                    float trueDamage = (statsSystem.ATK * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
                     GameManager.DamagePlayer((int)trueDamage*2, true);
                     LVLText.gameObject.SetActive(true);
                 }
                 else
                 {
-                    float trueDamage = (Damage * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+                    float trueDamage = (statsSystem.ATK * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
                     GameManager.DamagePlayer((int)trueDamage, false);
                     LVLText.gameObject.SetActive(true);
                 }
@@ -123,20 +132,68 @@ public class EnemyAI : MonoBehaviour
 
             case 1: //Pawn
 
-                RandomTime = Random.Range(0.5f / (float)PlayerPrefs.GetInt("LVL", 2), 2f / (float)PlayerPrefs.GetInt("LVL", 2));
+                RandomTime = Random.Range(0.25f * statsSystem.Speed, 0.5f * statsSystem.Speed);
                 MoveTo(5, RandomTime, true);
                 yield return new WaitForSeconds(RandomTime);
                 int critChancePawn = Random.Range(1, 101);
-                if (critChancePawn <= CritRate)
+                if (critChancePawn <= statsSystem.CritRate)
                 {
                     Debug.Log("Pawn Critical Hit!!!");
-                    float trueDamage = (Damage * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+                    float trueDamage = (statsSystem.ATK * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
                     GameManager.DamagePlayer((int)trueDamage * 2, true);
                     LVLText.gameObject.SetActive(true);
                 }
                 else
                 {
-                    float trueDamage = (Damage * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+                    float trueDamage = (statsSystem.ATK * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+                    GameManager.DamagePlayer((int)trueDamage, false);
+                    LVLText.gameObject.SetActive(true);
+                }
+                FinalMove();
+                break;
+
+
+
+            case 2: //Knight
+                MoveAmount = Random.Range(0, 2);
+
+                while (MoveAmount > 0)
+                {
+
+                    int RandomPosition;
+                    do
+                    {
+                        RandomPosition = Random.Range(0, 4);
+                    } while (RandomPosition == prev_Point);
+                    prev_Point = RandomPosition;
+
+                    RandomTime = Random.Range(0.5f * statsSystem.Speed, 1 * statsSystem.Speed);
+                    MoveTo(RandomPosition, RandomTime, false);
+                    transform.LeanMoveY(-4, RandomTime / 2).setEaseOutQuart().setOnComplete(() =>
+                    {
+                        transform.LeanMoveY(-7.5f, RandomTime / 2).setEaseInQuart(); //Jumping
+                    });
+                    yield return new WaitForSeconds(RandomTime);
+                    MoveAmount--;
+                }
+
+                MoveTo(5, 0.75f, true);
+                transform.LeanMoveY(-4, 0.5f / 2).setEaseOutQuart().setOnComplete(() =>
+                {
+                    transform.LeanMoveY(-7.5f, 0.5f / 2).setEaseInQuart(); //Jumping
+                });
+                yield return new WaitForSeconds(0.5f);
+                critChance = Random.Range(1, 101);
+                if (critChance <= statsSystem.CritRate)
+                {
+                    Debug.Log("Queen Critical Hit!!!");
+                    float trueDamage = (statsSystem.ATK * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+                    GameManager.DamagePlayer((int)trueDamage * 2, true);
+                    LVLText.gameObject.SetActive(true);
+                }
+                else
+                {
+                    float trueDamage = (statsSystem.ATK * (2 + level / 3)) * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
                     GameManager.DamagePlayer((int)trueDamage, false);
                     LVLText.gameObject.SetActive(true);
                 }
@@ -147,48 +204,24 @@ public class EnemyAI : MonoBehaviour
 
     void MoveTo(int i, float time, bool finalMove)
     {
-        Vector3 FinalPos = new (Movepoint[i].transform.position.x+XOffset, YOffset, Movepoint[i].transform.position.z);
-        if (i==5) FinalPos += new Vector3(1,0,0);
+        float finalX = Movepoint[i].transform.position.x + XOffset + (i == 5 ? 1 : 0);
+        float finalZ = Movepoint[i].transform.position.z;
 
-        if (!finalMove)
+        LeanTweenType ease = finalMove ? LeanTweenType.easeOutCirc : eases[Random.Range(0, eases.Length)];
+
+        transform.LeanMoveX(finalX, time).setEase(ease);
+        transform.LeanMoveZ(finalZ, time).setEase(ease).setOnComplete(() =>
         {
-            int chance = Random.Range(1, 5);
-            switch (chance)
-            {
-                case 1:
-                    transform.LeanMove(FinalPos, time).setEaseOutElastic().setOnComplete(() =>
-                    {
-                        aud.PlaySound(aud.SoundFX, aud.s_EnemyStep);
-                    });
-                    break;
-                case 2:
-                    transform.LeanMove(FinalPos, time).setEaseInOutSine().setOnComplete(() =>
-                    {
-                        aud.PlaySound(aud.SoundFX, aud.s_EnemyStep);
-                    });
-                    break;
-                case 3:
-                    transform.LeanMove(FinalPos, time).setEaseOutQuint().setOnComplete(() =>
-                    {
-                        aud.PlaySound(aud.SoundFX, aud.s_EnemyStep);
-                    });
-                    break;
-                case 4:
-                    transform.LeanMove(FinalPos, time).setEaseOutCirc().setOnComplete(() =>
-                    {
-                        aud.PlaySound(aud.SoundFX, aud.s_EnemyStep);
-                    });
-                    break;
-            }
-        }
-        else
-        {
-            transform.LeanMove(FinalPos, time).setEaseOutCirc().setOnComplete(() =>
-            {
-                aud.PlaySound(aud.SoundFX, aud.s_EnemyStep);
-            });
-        }
+            aud.PlaySound(aud.SoundFX, aud.s_EnemyStep);
+        });
     }
+
+    private readonly LeanTweenType[] eases = {
+    LeanTweenType.easeOutElastic,
+    LeanTweenType.easeInOutSine,
+    LeanTweenType.easeOutQuint,
+    LeanTweenType.easeOutCirc
+};
 
     void FinalMove()
     {
