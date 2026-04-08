@@ -38,6 +38,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip s_DisplayGoodMessage;
     public AudioClip s_DisplayBadMessage;
     public AudioClip s_UltShot;
+    public AudioClip s_AttackAudCue;
 
     Coroutine PlayingMusic;
 

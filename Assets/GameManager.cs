@@ -206,7 +206,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI PlayerStatsText;
     [SerializeField] TextMeshProUGUI[] EnemyStatsText;
 
-
+    [Header("Negotiate Properties")]
+    [SerializeField] GameObject NegotiateTitleText;
+    [SerializeField] GameObject NegotiateLineU;
+    [SerializeField] GameObject NegotiateLineD;
+    [SerializeField] GameObject NegotiateSelection;
+    [SerializeField] GameObject NegotiateList;
 
 
 
@@ -222,6 +227,14 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (!isPlayerAlive)
+        {
+            doChoiceControls = false;
+            doShootControls = false;
+            VentModeControls = false;
+            AnalyzeControls = false;
+        }
+
         if (c_Intro!=null && isIntroSkippable)
         {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Z))
@@ -293,12 +306,10 @@ public class GameManager : MonoBehaviour
             }
         }
 
-
         if (doShootControls)
         {
             if (PlayerStats.HP<=0 && isPlayerAlive)
             {
-                StopAllCoroutines();
                 c_GameOver ??= StartCoroutine(GameOver());
                 doShootControls = false;
                 isPlayerAlive = false;
@@ -401,7 +412,7 @@ public class GameManager : MonoBehaviour
     {
         aud.DoPlayMusic(aud.m_ChromaticRose, aud.m_ChromaticRose_wapred);
 
-        BorderOffset = Screen.height / 2;
+        BorderOffset       = Screen.height / 2;
         BorderOpenDistance = Screen.height / 2;
         BorderCloseDistance = 0;
         BorderCinematizeDistance = (Screen.height/2)-(Screen.height/7);
@@ -412,7 +423,6 @@ public class GameManager : MonoBehaviour
         c_Intro = StartCoroutine(Intro());
         ColorBleed = Camera.main.gameObject.GetComponent<ShaderEffect_BleedingColors>();
         HighScoreCounter.text = "HIGHSCORE: " + ScoreSystem.GetHighestScoreString();
-        MessagePanel.LeanScaleY(0, 0);
     }
 
 
@@ -577,7 +587,7 @@ public class GameManager : MonoBehaviour
                         }
                         else if (remedy.AddedHP < 0)
                             DisplayMessage($"{remedy.AddedHP} to your HP!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 1:
                         if (remedy.AddedDEF == 0) break;
@@ -586,7 +596,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{remedy.AddedDEF} to your DEF!", true, 2);
                         else if (remedy.AddedDEF < 0)
                             DisplayMessage($"{remedy.AddedDEF} to your DEF!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 2:
                         if (remedy.AddedATK == 0) break;
@@ -595,7 +605,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{remedy.AddedATK} to your ATK!", true, 2);
                         else if (remedy.AddedATK < 0)
                             DisplayMessage($"{remedy.AddedATK} to your ATK!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 3:
                         if (remedy.AddedElemATK == 0) break;
@@ -604,7 +614,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{remedy.AddedElemATK} to your ElemATK!", true, 2);
                         else if (remedy.AddedElemATK < 0)
                             DisplayMessage($"{remedy.AddedElemATK} to your ElemATK!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 4:
                         if (remedy.AddedCritRate == 0) break;
@@ -613,7 +623,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{remedy.AddedCritRate} to your CritRate!", true, 2);
                         else if (remedy.AddedCritRate < 0)
                             DisplayMessage($"{remedy.AddedCritRate} to your CritRate!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 5:
                         if (remedy.AddedSPEED == 0) break;
@@ -622,7 +632,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{remedy.AddedSPEED} to your Speed!", true, 2);
                         else if (remedy.AddedSPEED < 0)
                             DisplayMessage($"{remedy.AddedSPEED} to your Speed!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                 }
             }
@@ -646,7 +656,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{inflictor.AddedHP} to enemies' HP!", true, 2);
                         else if (inflictor.AddedHP < 0)
                             DisplayMessage($"{inflictor.AddedHP} to enemies' HP!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 1:
                         if (inflictor.AddedDEF == 0) break;
@@ -655,7 +665,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{inflictor.AddedDEF} to enemies' DEF!", true, 2);
                         else if (inflictor.AddedDEF < 0)
                             DisplayMessage($"{inflictor.AddedDEF} to enemies' DEF!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 2:
                         if (inflictor.AddedATK == 0) break;
@@ -664,7 +674,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{inflictor.AddedATK} to enemies' ATK!", true, 2);
                         else if (inflictor.AddedATK < 0)
                             DisplayMessage($"{inflictor.AddedATK} to enemies' ATK!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 3:
                         if (inflictor.AddedElemATK == 0) break;
@@ -673,7 +683,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{inflictor.AddedElemATK} to enemies' ElemATK!", true, 2);
                         else if (inflictor.AddedElemATK < 0)
                             DisplayMessage($"{inflictor.AddedElemATK} to enemies' ElemATK!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 4:
                         if (inflictor.AddedCritRate == 0) break;
@@ -682,7 +692,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{inflictor.AddedCritRate} to enemies' CritRate!", true, 2);
                         else if (inflictor.AddedCritRate < 0)
                             DisplayMessage($"{inflictor.AddedCritRate} to enemies' CritRate!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                     case 5:
                         if (inflictor.AddedSPEED == 0) break;
@@ -691,7 +701,7 @@ public class GameManager : MonoBehaviour
                             DisplayMessage($"+{inflictor.AddedSPEED} to enemies' Speed!", true, 2);
                         else if (inflictor.AddedSPEED < 0)
                             DisplayMessage($"{inflictor.AddedSPEED} to enemies' Speed!", false, 2);
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(1f);
                         break;
                 }
             }
@@ -746,7 +756,7 @@ public class GameManager : MonoBehaviour
 
     public void NegotiateMode(bool show)
     {
-        NegotiateUI.Instance.gameObject.SetActive(show);
+        NegotiateUI.Instance.gameObject.SetActive(true);
         NegotiateUI.Instance.ShowNegotiatePanel = show;
         if (show)
         {
@@ -756,6 +766,30 @@ public class GameManager : MonoBehaviour
             HideChoicePanel(true);
             HideStatsPanel(true);
             DoNegotiateView();
+
+            NegotiateTitleText.SetActive(true);
+            LeanTween.cancel(NegotiateTitleText);
+            NegotiateLineU.SetActive(true);
+            LeanTween.cancel(NegotiateLineU);
+            NegotiateLineD.SetActive(true);
+            LeanTween.cancel(NegotiateLineD);
+            NegotiateList.SetActive(true);
+            LeanTween.cancel(NegotiateList);
+            NegotiateTitleText.LeanScaleX(35, 0).setOnComplete(() =>
+            {
+                NegotiateTitleText.LeanScaleX(2, 0.3f).setEaseOutQuart();
+            });
+
+            NegotiateLineU.LeanRotate(new(0, 0, 90), 0).setOnComplete(() =>
+            {
+                NegotiateLineU.LeanRotate(new(0, 0, 0), 0.4f).setEaseInQuad();
+            });
+            NegotiateLineD.LeanRotate(new(0, 0, -90), 0).setOnComplete(() =>
+            {
+                NegotiateLineD.LeanRotate(new(0, 0, 0), 0.4f).setEaseInQuad();
+            });
+
+            //Todo Negotiate List
         }
         else
         {
@@ -772,7 +806,41 @@ public class GameManager : MonoBehaviour
         HideStatsPanel(false);
         DoCinemaView();
         StartUpChoicePanel(false);
+
+        LeanTween.cancel(NegotiateTitleText);
+        LeanTween.cancel(NegotiateLineU);
+        LeanTween.cancel(NegotiateLineD);
+        LeanTween.cancel(NegotiateList);
+        NegotiateTitleText.LeanScaleX(2, 0).setOnComplete(() =>
+        {
+            NegotiateTitleText.LeanScaleX(35, 0.1f).setEaseInQuart().setOnComplete(() =>
+            {
+                NegotiateList.SetActive(false);
+                NegotiateTitleText.SetActive(false);
+                NegotiateUI.Instance.gameObject.SetActive(false);
+            });
+        });
+
+        NegotiateLineU.LeanRotate(new(0, 0, 0), 0).setOnComplete(() =>
+        {
+            NegotiateLineU.LeanRotate(new(0, 350, 0), 0.5f).setEaseInQuad().setOnComplete(() =>
+            {
+                NegotiateLineU.SetActive(false);
+            });
+        });
+        NegotiateLineD.LeanRotate(new(0, 0, 0), 0).setOnComplete(() =>
+        {
+            NegotiateLineD.LeanRotate(new(0, -350, 0), 0.5f).setEaseInQuad().setOnComplete(() =>
+            {
+                NegotiateLineD.SetActive(false);
+            });
+        });
+
+        //To do negotiate list
     }
+
+
+
 
     void ChangeList(string direction)
     {
@@ -1308,7 +1376,7 @@ public class GameManager : MonoBehaviour
         Tonfa.transform.LeanRotateZ(0, 0.2f).setEaseInQuart();
         yield return new WaitForSeconds(0.1f);
         isParrying = false;
-        yield return new WaitForSeconds(0.4f*(10/(9+PlayerStats.Speed))); //Cooldown
+        //yield return new WaitForSeconds(0.4f*(10/(9+PlayerStats.Speed))); //Cooldown
         c_Parry = null;
     }
 

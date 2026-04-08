@@ -15,8 +15,9 @@ MonoBehaviour:
   itemName: Mint
   itemDescription: A piece of mint that soothes your soul. Heals 500HP
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 2
   PerTurnDuration: 0
+  particleEffect: {fileID: 0}
   AddedHP: 500
   AddedATK: 0
   AddedElemATK: 0

@@ -1,4 +1,3 @@
 repository "PTC/PTC@18968061352672@cloud"
   path "/"
-    br "/main"
-    co "/main"
+    smartbranch "/main" changeset "11"   

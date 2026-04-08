@@ -16,7 +16,7 @@ MonoBehaviour:
   itemDescription: A neuro drug from a trusted brand that hightens your sense. +100
     ATK, +5 CritRate, +3 Speed
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 2
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: 0

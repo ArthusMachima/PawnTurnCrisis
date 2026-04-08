@@ -17,7 +17,7 @@ MonoBehaviour:
     a plate. Wearing this greatly reduces the impact from attacks. +20 DEF, -3 CritRate,
     -5 Speed
   itemIcon: {fileID: 0}
-  RarityValue: 5
+  RarityValue: 3
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: 0
@@ -25,4 +25,4 @@ MonoBehaviour:
   AddedElemATK: 0
   AddedCritRate: -3
   AddedDEF: 20
-  AddedSPEED: -5
+  AddedSPEED: -3

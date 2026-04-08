@@ -16,7 +16,7 @@ MonoBehaviour:
   itemDescription: Overclocks the muscles of your body. +40 ATK, +20 DEF, -500 HP,
     +2 CritRate.
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 2
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: -500

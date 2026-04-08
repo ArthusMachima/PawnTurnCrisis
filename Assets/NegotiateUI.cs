@@ -22,5 +22,10 @@ public class NegotiateUI : MonoBehaviour
         {
             GameManager.Instance.NegotiateMode(false);
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Z))
+        {
+            GameManager.Instance.DisplayMessage("Feature unfinished, may be added someday...", false, 2);
+        }
     }
 }

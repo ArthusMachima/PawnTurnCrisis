@@ -104,13 +104,14 @@ public class EnemyAI : MonoBehaviour
                         RandomPosition = Random.Range(0, 4);
                     } while (RandomPosition == prev_Point);
                     prev_Point = RandomPosition;
-                    RandomTime = Random.Range(0.5f * (10/(9+statsSystem.Speed)), 1 * statsSystem.Speed);
+                    RandomTime = Random.Range(0.5f * (10/(9+ (float)statsSystem.Speed)), 1 * (float)statsSystem.Speed);
                     MoveTo(RandomPosition, RandomTime, false);
                     yield return new WaitForSeconds(RandomTime);
                     MoveAmount--;
                 }
 
-                MoveTo(5 * statsSystem.Speed, 0.5f * (10 / (9 + statsSystem.Speed)), true);
+                MoveTo(5, 0.5f * (10 / (9 + (float)statsSystem.Speed)), true);
+                aud.PlaySound(aud.SoundFX, aud.s_AttackAudCue); // audio que
                 yield return new WaitForSeconds(0.5f);
                 int critChance = Random.Range(1, 101);
                 if (critChance <= statsSystem.CritRate)
@@ -132,8 +133,9 @@ public class EnemyAI : MonoBehaviour
 
 
             case 1: //Pawn
-                RandomTime = Random.Range(0.25f * (10 / (9 + statsSystem.Speed)), 0.5f * (10 / (9 + statsSystem.Speed)));
+                RandomTime = Random.Range(0.25f * (10 / (9 + (float)statsSystem.Speed)), 0.5f * (10 / (9 + (float)statsSystem.Speed)));
                 MoveTo(5, RandomTime, true);
+                aud.PlaySound(aud.SoundFX, aud.s_AttackAudCue); // audio que
                 yield return new WaitForSeconds(RandomTime);
                 int critChancePawn = Random.Range(1, 101);
                 if (critChancePawn <= statsSystem.CritRate)
@@ -167,7 +169,7 @@ public class EnemyAI : MonoBehaviour
                     } while (RandomPosition == prev_Point);
                     prev_Point = RandomPosition;
 
-                    RandomTime = Random.Range(0.5f * (10 / (9 + statsSystem.Speed)), 1* (10 / (9 + statsSystem.Speed))*(10 / (9 + statsSystem.Speed)));
+                    RandomTime = Random.Range(0.5f * (10 / (9 + (float)statsSystem.Speed)), 1* (10 / (9 + (float)statsSystem.Speed)));
                     MoveTo(RandomPosition, RandomTime, false);
                     transform.LeanMoveY(-4, RandomTime / 2).setEaseOutQuart().setOnComplete(() =>
                     {
@@ -177,11 +179,12 @@ public class EnemyAI : MonoBehaviour
                     MoveAmount--;
                 }
 
-                MoveTo(5, 0.75f * (10 / (9 + statsSystem.Speed)), true);
+                MoveTo(5, 0.75f * (10 / (9 + (float)statsSystem.Speed)), true);
                 transform.LeanMoveY(-4, 0.5f / 2).setEaseOutQuart().setOnComplete(() =>
                 {
                     transform.LeanMoveY(-7.5f, 0.5f / 2).setEaseInQuart(); //Jumping
                 });
+                aud.PlaySound(aud.SoundFX, aud.s_AttackAudCue); // audio que
                 yield return new WaitForSeconds(0.5f);
                 critChance = Random.Range(1, 101);
                 if (critChance <= statsSystem.CritRate)
@@ -204,6 +207,7 @@ public class EnemyAI : MonoBehaviour
 
     void MoveTo(int i, float time, bool finalMove)
     {
+        if (Movepoint[i] == null) return;
         float finalX = Movepoint[i].transform.position.x + XOffset + (i == 5 ? 1 : 0);
         float finalZ = Movepoint[i].transform.position.z;
 

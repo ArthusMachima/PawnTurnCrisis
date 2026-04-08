@@ -16,7 +16,7 @@ MonoBehaviour:
   itemDescription: Greatly overclocks the muscles of your body with severe consequences.
     +100 ATK, +30 DEF, -990 HP, +3 CritRate.
   itemIcon: {fileID: 0}
-  RarityValue: 5
+  RarityValue: 3
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: -990

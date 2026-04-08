@@ -14,8 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Plastic Plating
   itemDescription: A scrap from a dead chess piece that's conveniently shaped like
-    a plate. Wearing this slightly reduces the impact from attacks. +5 DEF, -1 CritRate,
-    -1 Speed.
+    a plate. Wearing this slightly reduces the impact from attacks. +5 DEF, -1 CritRate.
   itemIcon: {fileID: 0}
   RarityValue: 1
   PerTurnDuration: 0
@@ -25,4 +24,4 @@ MonoBehaviour:
   AddedElemATK: 0
   AddedCritRate: -1
   AddedDEF: 5
-  AddedSPEED: -1
+  AddedSPEED: 0
