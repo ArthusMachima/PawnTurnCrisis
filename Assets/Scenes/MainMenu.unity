@@ -2561,10 +2561,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -4768,6 +4768,13 @@ MonoBehaviour:
   s_Explosion: {fileID: 8300000, guid: 79e28965570f38b468812be2cf3e3e84, type: 3}
   s_ClearStage: {fileID: 0}
   s_FailedStage: {fileID: 0}
+  s_NoBullets: {fileID: 0}
+  s_Ult: {fileID: 0}
+  s_UltExplosion: {fileID: 0}
+  s_DisplayGoodMessage: {fileID: 0}
+  s_DisplayBadMessage: {fileID: 0}
+  s_UltShot: {fileID: 0}
+  s_AttackAudCue: {fileID: 0}
 --- !u!4 &6880282654075281960
 Transform:
   m_ObjectHideFlags: 0
