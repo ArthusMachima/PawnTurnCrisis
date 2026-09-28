@@ -9,6 +9,17 @@ using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Panel Test")]
+    [SerializeField] bool PanelDebug;
+    [SerializeField] bool TriggerChoicePanel;
+    [SerializeField] bool TriggerAttackPanel;
+    [SerializeField] bool TriggerInventoryPanel;
+    [SerializeField] bool TriggerAnalysisPanel;
+    [SerializeField] bool TriggerStatsPanel;
+    [SerializeField] bool TriggerHighscorePanel;
+ 
+    
+    
     [Header("Debug")]
     [SerializeField] private bool BypassVentReq;
     [SerializeField] private bool AvoidPlayerDamage;
@@ -17,26 +28,26 @@ public class GameManager : MonoBehaviour
     bool _ShowCursorTrigger;
 
     [Header("Debug - Panels")]
-    [SerializeField] private float BulletDiagonalAmount;
-    [SerializeField] private int ChoiceBulletAmount;
-    [SerializeField] private int AttackBulletAmount;
-    [SerializeField] private float AnimationTime;
-    [SerializeField] private float RightPanelHideDistance;
-    [SerializeField] private float RightPanelHideOffset;
-    [SerializeField] private float LeftPanelHideDistance;
+    [SerializeField] float BulletDiagonalAmount;
+    [SerializeField] int ChoiceBulletAmount;
+    [SerializeField] int AttackBulletAmount;
+    [SerializeField] float AnimationTime;
+    [SerializeField] float RightPanelHideDistance;
+    [SerializeField] float RightPanelHideOffset;
+    [SerializeField] float LeftPanelHideDistance;
 
     [Header("Border Test")]
-    [SerializeField] private bool TriggerBorderOpen;
-    [SerializeField] private bool TriggerBorderClose;
-    [SerializeField] private bool CurrentScreenSize;
-    [SerializeField] private bool TriggerBorderCinematize;
-    [SerializeField] private GameObject HigherBorder;
-    [SerializeField] private GameObject LowerBorder;
-    [SerializeField] private float BorderOpenDistance;
-    [SerializeField] private float BorderCloseDistance;
-    [SerializeField] private float BorderCinematizeDistance;
-    [SerializeField] private float BorderAnimationTime;
-    [SerializeField] private float BorderOffset;
+    [SerializeField] bool TriggerBorderOpen;
+    [SerializeField] bool TriggerBorderClose;
+    [SerializeField] bool CurrentScreenSize;
+    [SerializeField] bool TriggerBorderCinematize;
+    [SerializeField] GameObject HigherBorder;
+    [SerializeField] GameObject LowerBorder;
+    [SerializeField] float BorderOpenDistance;
+    [SerializeField] float BorderCloseDistance;
+    [SerializeField] float BorderCinematizeDistance;
+    [SerializeField] float BorderAnimationTime;
+    [SerializeField] float BorderOffset;
 
 
 
@@ -83,8 +94,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool TriggerStopCamMovement;
     [SerializeField] private bool TriggerCinemaView;
     [SerializeField] private bool TriggerLandscapeView;
-    [SerializeField] private bool AttackShootTest;
-    [SerializeField] private bool AttackShootReload;
     [SerializeField] private bool EnemyMoveTest;
     [SerializeField] private ShaderEffect_BleedingColors ColorBleed;
     [SerializeField] private ShaderEffect_Unsync Unsync;
@@ -121,18 +130,18 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Stats Panel Properties")]
-    [SerializeField] private int Wave = 0;
-    [SerializeField] private CanvasGroup WaveCounterOnCinematize;
-    [SerializeField] private CanvasGroup ScoreCounterOnCinematize;
-    [SerializeField] private GameObject ScoreCounter;
-    [SerializeField] private TextMeshProUGUI ScoreCounterText;
-    [SerializeField] private TextMeshProUGUI HighScoreCounter;
-    [SerializeField] private int Score;
+    [SerializeField] int Wave = 0;
+    [SerializeField] CanvasGroup WaveCounterOnCinematize;
+    [SerializeField] CanvasGroup ScoreCounterOnCinematize;
+    [SerializeField] GameObject ScoreCounter;
+    [SerializeField] TextMeshProUGUI ScoreCounterText;
+    [SerializeField] TextMeshProUGUI HighScoreCounter;
+    [SerializeField] int Score;
     public StatsSystem PlayerStats;
-    [SerializeField] private bool isPlayerAlive = true;
-    [SerializeField] private GameObject StatsPanel;
-    [SerializeField] private ConsoleText ConsoleText;
-    [SerializeField] private ScoreSystem ScoreSystem;
+    [SerializeField] bool isPlayerAlive = true;
+    [SerializeField] GameObject StatsPanel;
+    [SerializeField] ConsoleText ConsoleText;
+    [SerializeField] ScoreSystem ScoreSystem;
     [SerializeField] private TMP_InputField InputField;
     [SerializeField] private CanvasGroup Tooltips;
     [SerializeField] private bool TooltipsShown;
@@ -398,11 +407,26 @@ public class GameManager : MonoBehaviour
         }
 
         //Triggers
-        if (ShowCursorTrigger!=_ShowCursorTrigger)
+        if (ShowCursorTrigger!=_ShowCursorTrigger) { ShowCursor(ShowCursorTrigger); _ShowCursorTrigger = ShowCursorTrigger; }
+        if (TriggerCinemaView) { DoCinemaView(); TriggerCinemaView = false; }
+        if (TriggerFirstPersonView) { DoFirstPersonView(); TriggerFirstPersonView = false; }
+        if (TriggerLandscapeView) { DoLandscapeView(); TriggerLandscapeView = false; }
+
+
+        if (PanelDebug)
         {
-            ShowCursor(ShowCursorTrigger);
-            _ShowCursorTrigger = ShowCursorTrigger;
+            HideAttackPanel(!TriggerAttackPanel);
+            HideStatsPanel(!TriggerStatsPanel);
+            HideChoicePanel(!TriggerChoicePanel);
+            //HideHighscorePanel(!TriggerHighscorePanel);
+            InvUI.ShowInventory(TriggerInventoryPanel);
+            //AnalyzeMode(TriggerAnalysisPanel);
+            PanelDebug = false;
         }
+        
+        
+        
+        
 
         //Variable Syncing
         ScoreCounterText.text = "Score: " + Score;
@@ -456,8 +480,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            float width = Screen.width;
             AttackPanelCanvas.alpha = 1;
-            AttackPanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            AttackPanel.transform.LeanMoveX(Screen.width - 80*(width/1920), AnimationTime).setEaseOutQuint();
             ShowCursor(false); // Replaced Cursor.visible = false;
             SightCursor.SetActive(true);
         }
@@ -473,9 +498,23 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            
+            float width = Screen.width;
+            StageInfo.transform.LeanMoveX(Screen.width - (80*(width/1920)), AnimationTime).setEaseOutQuint();
             StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
             ShowCursor(true); // Replaced Cursor.visible = true;
+
+            string difficulty;
+            switch (PlayerPrefs.GetInt("LVL", 2))
+            {
+                case 0:  { difficulty = "Easy"; break; }
+                case 1:  { difficulty = "Normal"; break; }
+                case 2:  { difficulty = "Hard"; break; }
+                default: { difficulty = "Overclock"; break; }
+            }
+
+            DifficultyDisplay.text = difficulty;
+            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
         }
     }
 
@@ -491,11 +530,12 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            float width = Screen.width;
             AttackHalo.autoScaleType = AutoScaleType.Grow;
             AttackHalo.gameObject.SetActive(true);
             ChoicePanelCanvas.alpha = 1;
             aud.PlaySound(aud.SoundFX, aud.s_ReloadGun);
-            ChoicePanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            ChoicePanel.transform.LeanMoveX(Screen.width - 80*(width/1920), AnimationTime).setEaseOutQuint().setOnComplete(() =>
             {
                 doChoiceControls = true;
             });
@@ -594,7 +634,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 1:
                         if (remedy.AddedDEF == 0) break;
-                        PlayerStats.DEF += remedy.AddedDEF;
+                        PlayerStats.AddDEF(remedy.AddedDEF);
                         if (remedy.AddedDEF > 0)
                             DisplayMessage($"+{remedy.AddedDEF} to your DEF!", true, 2);
                         else if (remedy.AddedDEF < 0)
@@ -603,7 +643,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 2:
                         if (remedy.AddedATK == 0) break;
-                        PlayerStats.ATK += remedy.AddedATK;
+                        PlayerStats.AddATK(remedy.AddedATK);
                         if (remedy.AddedATK > 0)
                             DisplayMessage($"+{remedy.AddedATK} to your ATK!", true, 2);
                         else if (remedy.AddedATK < 0)
@@ -612,7 +652,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 3:
                         if (remedy.AddedElemATK == 0) break;
-                        PlayerStats.ElemATK += remedy.AddedElemATK;
+                        PlayerStats.AddElemATK(remedy.AddedElemATK);
                         if (remedy.AddedElemATK > 0)
                             DisplayMessage($"+{remedy.AddedElemATK} to your ElemATK!", true, 2);
                         else if (remedy.AddedElemATK < 0)
@@ -621,7 +661,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 4:
                         if (remedy.AddedCritRate == 0) break;
-                        PlayerStats.CritRate += remedy.AddedCritRate;
+                        PlayerStats.AddCritRate(remedy.AddedCritRate);
                         if (remedy.AddedCritRate > 0)
                             DisplayMessage($"+{remedy.AddedCritRate} to your CritRate!", true, 2);
                         else if (remedy.AddedCritRate < 0)
@@ -630,7 +670,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 5:
                         if (remedy.AddedSPEED == 0) break;
-                        PlayerStats.Speed += remedy.AddedSPEED;
+                        PlayerStats.AddSpeed(remedy.AddedSPEED);
                         if (remedy.AddedSPEED > 0)
                             DisplayMessage($"+{remedy.AddedSPEED} to your Speed!", true, 2);
                         else if (remedy.AddedSPEED < 0)
@@ -654,7 +694,7 @@ public class GameManager : MonoBehaviour
                 {
                     case 0:
                         if (inflictor.AddedHP == 0) break;
-                        foreach (var enemy in enemyStats) enemy.HP = inflictor.AddedHP;
+                        foreach (var enemy in enemyStats) enemy.HP =+ inflictor.AddedHP;
                         if (inflictor.AddedHP > 0)
                             DisplayMessage($"+{inflictor.AddedHP} to enemies' HP!", true, 2);
                         else if (inflictor.AddedHP < 0)
@@ -663,7 +703,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 1:
                         if (inflictor.AddedDEF == 0) break;
-                        foreach (var enemy in enemyStats) enemy.DEF = inflictor.AddedDEF;
+                        foreach (var enemy in enemyStats) enemy.AddDEF(inflictor.AddedDEF);
                         if (inflictor.AddedDEF > 0)
                             DisplayMessage($"+{inflictor.AddedDEF} to enemies' DEF!", true, 2);
                         else if (inflictor.AddedDEF < 0)
@@ -672,7 +712,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 2:
                         if (inflictor.AddedATK == 0) break;
-                        foreach (var enemy in enemyStats) enemy.ATK = inflictor.AddedATK;
+                        foreach (var enemy in enemyStats) enemy.AddATK(inflictor.AddedATK);
                         if (inflictor.AddedATK > 0)
                             DisplayMessage($"+{inflictor.AddedATK} to enemies' ATK!", true, 2);
                         else if (inflictor.AddedATK < 0)
@@ -681,7 +721,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 3:
                         if (inflictor.AddedElemATK == 0) break;
-                        foreach (var enemy in enemyStats) enemy.ElemATK = inflictor.AddedElemATK;
+                        foreach (var enemy in enemyStats) enemy.AddElemATK(inflictor.AddedElemATK);
                         if (inflictor.AddedElemATK > 0)
                             DisplayMessage($"+{inflictor.AddedElemATK} to enemies' ElemATK!", true, 2);
                         else if (inflictor.AddedElemATK < 0)
@@ -690,7 +730,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 4:
                         if (inflictor.AddedCritRate == 0) break;
-                        foreach (var enemy in enemyStats) enemy.CritRate = inflictor.AddedCritRate;
+                        foreach (var enemy in enemyStats) enemy.AddCritRate(inflictor.AddedCritRate);
                         if (inflictor.AddedCritRate > 0)
                             DisplayMessage($"+{inflictor.AddedCritRate} to enemies' CritRate!", true, 2);
                         else if (inflictor.AddedCritRate < 0)
@@ -699,7 +739,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 5:
                         if (inflictor.AddedSPEED == 0) break;
-                        foreach (var enemy in enemyStats) enemy.Speed = inflictor.AddedSPEED;
+                        foreach (var enemy in enemyStats) enemy.AddSpeed(inflictor.AddedSPEED);
                         if (inflictor.AddedSPEED > 0)
                             DisplayMessage($"+{inflictor.AddedSPEED} to enemies' Speed!", true, 2);
                         else if (inflictor.AddedSPEED < 0)
@@ -746,21 +786,11 @@ public class GameManager : MonoBehaviour
             StartCoroutine(DelayedInventoryHide());
         }
     }
-
-    IEnumerator DelayedInventoryHide()
-    {
-        InvUI.ShowInventory(false);
-        yield return new WaitForSeconds(0.5f);
-        HideChoicePanel(false);
-        HideStatsPanel(false);
-        StartUpChoicePanel(false);
-        InvUI.gameObject.SetActive(false);
-    }
-
+    
     public void NegotiateMode(bool show)
     {
-        NegotiateUI.Instance.gameObject.SetActive(true);
-        NegotiateUI.Instance.ShowNegotiatePanel = show;
+        NegotiateSystem.inst.gameObject.SetActive(true);
+        NegotiateSystem.inst.enabled = show;
         if (show)
         {
             StatsPanelHalo.SetActive(true);
@@ -820,7 +850,7 @@ public class GameManager : MonoBehaviour
             {
                 NegotiateList.SetActive(false);
                 NegotiateTitleText.SetActive(false);
-                NegotiateUI.Instance.gameObject.SetActive(false);
+                NegotiateSystem.inst.gameObject.SetActive(false);
             });
         });
 
@@ -841,6 +871,19 @@ public class GameManager : MonoBehaviour
 
         //To do negotiate list
     }
+
+    IEnumerator DelayedInventoryHide()
+    {
+        InvUI.ShowInventory(false);
+        yield return new WaitForSeconds(0.5f);
+        HideChoicePanel(false);
+        HideStatsPanel(false);
+        StartUpChoicePanel(false);
+        InvUI.gameObject.SetActive(false);
+        NegotiateSystem.inst.enabled = false;
+    }
+
+    
 
 
 
@@ -999,11 +1042,11 @@ public class GameManager : MonoBehaviour
             DoLandscapeView();
             PlayerStatsText.text = 
                 $"HP: {PlayerStats.HP}/1000\r\n" +
-                $"ATK: {PlayerStats.ATK}\r\n" +
-                $"ElemATK: {PlayerStats.ElemATK}\r\n" +
-                $"CritRate: {PlayerStats.CritRate}%\r\n" +
-                $"DEF: {PlayerStats.DEF}\r\n" +
-                $"SPEED: {PlayerStats.Speed}\r\n";
+                $"ATK: {PlayerStats.GetATK()}\r\n" +
+                $"ElemATK: {PlayerStats.GetElemATK()}\r\n" +
+                $"CritRate: {PlayerStats.GetCritRate()}%\r\n" +
+                $"DEF: {PlayerStats.GetDEF()}\r\n" +
+                $"SPEED: {PlayerStats.GetSpeed()}\r\n";
 
             int i = 0;
             foreach (GameObject enemy in CurEnemies)
@@ -1012,11 +1055,11 @@ public class GameManager : MonoBehaviour
                 EnemyStatsText[i].gameObject.SetActive(true);
                 EnemyStatsText[i].text =
                 $"HP: {stats.HP}\r\n" +
-                $"ATK: {stats.ATK}\r\n" +
-                $"ElemATK: {stats.ElemATK}\r\n" +
-                $"CritRate: {stats.CritRate}%\r\n" +
-                $"DEF: {stats.DEF}\r\n" +
-                $"SPEED: {stats.Speed}\r\n";
+                $"ATK: {stats.GetATK()}\r\n" +
+                $"ElemATK: {stats.GetElemATK()}\r\n" +
+                $"CritRate: {stats.GetCritRate()}%\r\n" +
+                $"DEF: {stats.GetDEF()}\r\n" +
+                $"SPEED: {stats.GetSpeed()}\r\n";
                 i++;
             }
 
@@ -1100,7 +1143,6 @@ public class GameManager : MonoBehaviour
         {
             if (Wave>6)
             {
-                Debug.Log("Enemy amount randomized");
                 EnemyAmount = Random.Range(4, Wave + 1);
             }
             else
@@ -1137,15 +1179,15 @@ public class GameManager : MonoBehaviour
         DoCinemaView();
         HideChoicePanel(false);
         StartUpChoicePanel(true);
-        for (int i = 0; i < CurEnemies.Count; i++)
+        foreach (var t in CurEnemies)
         {
-            CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
-            CurEnemies[i].transform.GetChild(0).gameObject.GetComponent<StatsSystem>().RestoreMaterial();
+            t.transform.GetChild(0).gameObject.SetActive(true);
+            t.transform.GetChild(0).gameObject.GetComponent<StatsSystem>().RestoreMaterial();
         }
 
-        for (int i = 0; i < AllEnemies.Count; i++)
+        foreach (var t in AllEnemies)
         {
-            AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+            t.transform.Find("Idle").gameObject.SetActive(false);
         }
 
         StartCoroutine(DelayedEndTurn());
@@ -1170,9 +1212,9 @@ public class GameManager : MonoBehaviour
             CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < AllEnemies.Count; i++)
+        foreach (var t in AllEnemies)
         {
-            AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+            t.transform.Find("Idle").gameObject.SetActive(false);
         }
     }
 
@@ -1180,9 +1222,9 @@ public class GameManager : MonoBehaviour
     {
         aud.PlaySound(aud.SoundFX, aud.s_ClearStage);
         doShootControls = false;
-        for (int i = 0; i < AllEnemies.Count; i++)
+        foreach (var t in AllEnemies)
         {
-            Destroy(AllEnemies[i]);
+            Destroy(t);
         }
         AllEnemies.Clear();
         DoRerunIntro();
@@ -1340,12 +1382,8 @@ public class GameManager : MonoBehaviour
 
     void ReloadAttackPanel(int bullet)
     {
-        if (bullet < 6)
-            ClipIndex = bullet;
-        else
-            ClipIndex = 6;
+        ClipIndex = bullet < 6 ? bullet : 6;
 
-        Debug.Log("Reloaded");
         foreach (GameObject bullets in Bullets) bullets.SetActive(false); 
         for (int i = 0; i < bullet; i++)
         {
