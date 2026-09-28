@@ -124,6 +124,7 @@ public class InventoryUI : MonoBehaviour
     float uiShowAnimTime = 0.5f;
     public void ShowInventory(bool shown)
     {
+        float width = Screen.width;
         Controlable = false;
         LeanTween.cancel(Foreground);
         LeanTween.cancel(Cylinder);
@@ -137,9 +138,9 @@ public class InventoryUI : MonoBehaviour
             pos = 30;
             SetUIPosition();
             ItemDescriptionPanel.LeanMoveLocalX(-340+(-340+1220.274f), uiShowAnimTime).setEaseInOutQuint();
-            Foreground.LeanMoveX(-620 + (-620 + 699.7267f), uiShowAnimTime).setDelay(0.05f).setEaseInOutQuint();
+            Foreground.LeanMoveX((-620 + (-620 + 699.7267f))*(width/1920), uiShowAnimTime).setDelay(0.05f).setEaseInOutQuint();
             Cylinder.LeanMoveX(-80+(-80+159.7268f), uiShowAnimTime).setEaseInOutQuint();
-            ItemPanel.LeanMoveX(280+(280-200.2732f), uiShowAnimTime).setEaseInOutQuint().setOnComplete(() =>
+            ItemPanel.LeanMoveX((280+(280-200.2732f))*(width/1920), uiShowAnimTime).setEaseInOutQuint().setOnComplete(() =>
             {
                 Controlable=true;
             });
@@ -147,9 +148,9 @@ public class InventoryUI : MonoBehaviour
         else
         {
             ItemDescriptionPanel.LeanMoveLocalX(500+(500+380.2733f), uiShowAnimTime).setEaseInOutQuint();
-            Foreground.LeanMoveX(-2000+(-2000+2079.726f), uiShowAnimTime).setEaseInOutQuint();
+            Foreground.LeanMoveX((-2000+(-2000+2079.726f))*(width/1920), uiShowAnimTime).setEaseInOutQuint();
             Cylinder.LeanMoveX(-400+(-400+159.7268f), uiShowAnimTime).setEaseInOutQuint();
-            ItemPanel.LeanMoveX(-850, uiShowAnimTime).setEaseInOutQuint();
+            ItemPanel.LeanMoveX(-850*(width/1920), uiShowAnimTime).setEaseInOutQuint();
         }
         isInventoryShown = shown;
     }

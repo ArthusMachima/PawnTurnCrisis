@@ -9,6 +9,17 @@ using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Panel Test")]
+    [SerializeField] bool PanelDebug;
+    [SerializeField] bool TriggerChoicePanel;
+    [SerializeField] bool TriggerAttackPanel;
+    [SerializeField] bool TriggerInventoryPanel;
+    [SerializeField] bool TriggerAnalysisPanel;
+    [SerializeField] bool TriggerStatsPanel;
+    [SerializeField] bool TriggerHighscorePanel;
+ 
+    
+    
     [Header("Debug")]
     [SerializeField] private bool BypassVentReq;
     [SerializeField] private bool AvoidPlayerDamage;
@@ -17,26 +28,26 @@ public class GameManager : MonoBehaviour
     bool _ShowCursorTrigger;
 
     [Header("Debug - Panels")]
-    [SerializeField] private float BulletDiagonalAmount;
-    [SerializeField] private int ChoiceBulletAmount;
-    [SerializeField] private int AttackBulletAmount;
-    [SerializeField] private float AnimationTime;
-    [SerializeField] private float RightPanelHideDistance;
-    [SerializeField] private float RightPanelHideOffset;
-    [SerializeField] private float LeftPanelHideDistance;
+    [SerializeField] float BulletDiagonalAmount;
+    [SerializeField] int ChoiceBulletAmount;
+    [SerializeField] int AttackBulletAmount;
+    [SerializeField] float AnimationTime;
+    [SerializeField] float RightPanelHideDistance;
+    [SerializeField] float RightPanelHideOffset;
+    [SerializeField] float LeftPanelHideDistance;
 
     [Header("Border Test")]
-    [SerializeField] private bool TriggerBorderOpen;
-    [SerializeField] private bool TriggerBorderClose;
-    [SerializeField] private bool CurrentScreenSize;
-    [SerializeField] private bool TriggerBorderCinematize;
-    [SerializeField] private GameObject HigherBorder;
-    [SerializeField] private GameObject LowerBorder;
-    [SerializeField] private float BorderOpenDistance;
-    [SerializeField] private float BorderCloseDistance;
-    [SerializeField] private float BorderCinematizeDistance;
-    [SerializeField] private float BorderAnimationTime;
-    [SerializeField] private float BorderOffset;
+    [SerializeField] bool TriggerBorderOpen;
+    [SerializeField] bool TriggerBorderClose;
+    [SerializeField] bool CurrentScreenSize;
+    [SerializeField] bool TriggerBorderCinematize;
+    [SerializeField] GameObject HigherBorder;
+    [SerializeField] GameObject LowerBorder;
+    [SerializeField] float BorderOpenDistance;
+    [SerializeField] float BorderCloseDistance;
+    [SerializeField] float BorderCinematizeDistance;
+    [SerializeField] float BorderAnimationTime;
+    [SerializeField] float BorderOffset;
 
 
 
@@ -83,8 +94,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool TriggerStopCamMovement;
     [SerializeField] private bool TriggerCinemaView;
     [SerializeField] private bool TriggerLandscapeView;
-    [SerializeField] private bool AttackShootTest;
-    [SerializeField] private bool AttackShootReload;
     [SerializeField] private bool EnemyMoveTest;
     [SerializeField] private ShaderEffect_BleedingColors ColorBleed;
     [SerializeField] private ShaderEffect_Unsync Unsync;
@@ -121,18 +130,18 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Stats Panel Properties")]
-    [SerializeField] private int Wave = 0;
-    [SerializeField] private CanvasGroup WaveCounterOnCinematize;
-    [SerializeField] private CanvasGroup ScoreCounterOnCinematize;
-    [SerializeField] private GameObject ScoreCounter;
-    [SerializeField] private TextMeshProUGUI ScoreCounterText;
-    [SerializeField] private TextMeshProUGUI HighScoreCounter;
-    [SerializeField] private int Score;
+    [SerializeField] int Wave = 0;
+    [SerializeField] CanvasGroup WaveCounterOnCinematize;
+    [SerializeField] CanvasGroup ScoreCounterOnCinematize;
+    [SerializeField] GameObject ScoreCounter;
+    [SerializeField] TextMeshProUGUI ScoreCounterText;
+    [SerializeField] TextMeshProUGUI HighScoreCounter;
+    [SerializeField] int Score;
     public StatsSystem PlayerStats;
-    [SerializeField] private bool isPlayerAlive = true;
-    [SerializeField] private GameObject StatsPanel;
-    [SerializeField] private ConsoleText ConsoleText;
-    [SerializeField] private ScoreSystem ScoreSystem;
+    [SerializeField] bool isPlayerAlive = true;
+    [SerializeField] GameObject StatsPanel;
+    [SerializeField] ConsoleText ConsoleText;
+    [SerializeField] ScoreSystem ScoreSystem;
     [SerializeField] private TMP_InputField InputField;
     [SerializeField] private CanvasGroup Tooltips;
     [SerializeField] private bool TooltipsShown;
@@ -403,6 +412,22 @@ public class GameManager : MonoBehaviour
         if (TriggerFirstPersonView) { DoFirstPersonView(); TriggerFirstPersonView = false; }
         if (TriggerLandscapeView) { DoLandscapeView(); TriggerLandscapeView = false; }
 
+
+        if (PanelDebug)
+        {
+            HideAttackPanel(!TriggerAttackPanel);
+            HideStatsPanel(!TriggerStatsPanel);
+            HideChoicePanel(!TriggerChoicePanel);
+            //HideHighscorePanel(!TriggerHighscorePanel);
+            InvUI.ShowInventory(TriggerInventoryPanel);
+            //AnalyzeMode(TriggerAnalysisPanel);
+            PanelDebug = false;
+        }
+        
+        
+        
+        
+
         //Variable Syncing
         ScoreCounterText.text = "Score: " + Score;
         Shooter.doShoot = doShootControls;
@@ -455,8 +480,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            float width = Screen.width;
             AttackPanelCanvas.alpha = 1;
-            AttackPanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            AttackPanel.transform.LeanMoveX(Screen.width - 80*(width/1920), AnimationTime).setEaseOutQuint();
             ShowCursor(false); // Replaced Cursor.visible = false;
             SightCursor.SetActive(true);
         }
@@ -472,7 +498,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
+            
+            float width = Screen.width;
+            StageInfo.transform.LeanMoveX(Screen.width - (80*(width/1920)), AnimationTime).setEaseOutQuint();
             StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
             ShowCursor(true); // Replaced Cursor.visible = true;
 
@@ -502,11 +530,12 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            float width = Screen.width;
             AttackHalo.autoScaleType = AutoScaleType.Grow;
             AttackHalo.gameObject.SetActive(true);
             ChoicePanelCanvas.alpha = 1;
             aud.PlaySound(aud.SoundFX, aud.s_ReloadGun);
-            ChoicePanel.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint().setOnComplete(() =>
+            ChoicePanel.transform.LeanMoveX(Screen.width - 80*(width/1920), AnimationTime).setEaseOutQuint().setOnComplete(() =>
             {
                 doChoiceControls = true;
             });
@@ -757,6 +786,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(DelayedInventoryHide());
         }
     }
+    
     public void NegotiateMode(bool show)
     {
         NegotiateSystem.inst.gameObject.SetActive(true);
@@ -1149,15 +1179,15 @@ public class GameManager : MonoBehaviour
         DoCinemaView();
         HideChoicePanel(false);
         StartUpChoicePanel(true);
-        for (int i = 0; i < CurEnemies.Count; i++)
+        foreach (var t in CurEnemies)
         {
-            CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
-            CurEnemies[i].transform.GetChild(0).gameObject.GetComponent<StatsSystem>().RestoreMaterial();
+            t.transform.GetChild(0).gameObject.SetActive(true);
+            t.transform.GetChild(0).gameObject.GetComponent<StatsSystem>().RestoreMaterial();
         }
 
-        for (int i = 0; i < AllEnemies.Count; i++)
+        foreach (var t in AllEnemies)
         {
-            AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+            t.transform.Find("Idle").gameObject.SetActive(false);
         }
 
         StartCoroutine(DelayedEndTurn());
@@ -1182,9 +1212,9 @@ public class GameManager : MonoBehaviour
             CurEnemies[i].transform.GetChild(0).gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < AllEnemies.Count; i++)
+        foreach (var t in AllEnemies)
         {
-            AllEnemies[i].transform.Find("Idle").gameObject.SetActive(false);
+            t.transform.Find("Idle").gameObject.SetActive(false);
         }
     }
 
@@ -1192,9 +1222,9 @@ public class GameManager : MonoBehaviour
     {
         aud.PlaySound(aud.SoundFX, aud.s_ClearStage);
         doShootControls = false;
-        for (int i = 0; i < AllEnemies.Count; i++)
+        foreach (var t in AllEnemies)
         {
-            Destroy(AllEnemies[i]);
+            Destroy(t);
         }
         AllEnemies.Clear();
         DoRerunIntro();
@@ -1352,10 +1382,7 @@ public class GameManager : MonoBehaviour
 
     void ReloadAttackPanel(int bullet)
     {
-        if (bullet < 6)
-            ClipIndex = bullet;
-        else
-            ClipIndex = 6;
+        ClipIndex = bullet < 6 ? bullet : 6;
 
         foreach (GameObject bullets in Bullets) bullets.SetActive(false); 
         for (int i = 0; i < bullet; i++)
