@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Crystal Bomb
   m_EditorClassIdentifier: 
   itemName: Crystal Bomb
-  itemDescription: Reduces enemy ATK at the expense of gaining DEF. -300 ATK, +20
+  itemDescription: Reduces enemy ATK at the expense of gaining DEF. -300 ATK, +70
     DEF, -3 Speed
   itemIcon: {fileID: 0}
   RarityValue: 3
@@ -23,5 +23,5 @@ MonoBehaviour:
   AddedATK: -300
   AddedElemATK: 0
   AddedCritRate: 0
-  AddedDEF: 20
+  AddedDEF: 70
   AddedSPEED: -3

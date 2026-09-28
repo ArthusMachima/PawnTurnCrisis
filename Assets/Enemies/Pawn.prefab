@@ -158,11 +158,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4694952534084135522}
-  - component: {fileID: 6898917214445598088}
-  - component: {fileID: 567713110031449681}
   - component: {fileID: 8145240173970011033}
   - component: {fileID: 4794302976109480160}
   - component: {fileID: 6772884271936583609}
+  - component: {fileID: 6898917214445598088}
+  - component: {fileID: 567713110031449681}
+  - component: {fileID: 3547412777179903052}
   m_Layer: 0
   m_Name: Pawn
   m_TagString: Untagged
@@ -186,71 +187,6 @@ Transform:
   - {fileID: 1280651615512508117}
   m_Father: {fileID: 8726939979086524092}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6898917214445598088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3763110366849886652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d71afd4a6df7eb74a975b5580eaac6ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HPBar: {fileID: 5040101268743026248}
-  HPNum: {fileID: 1104537665989728574}
-  MaxHP: 400
-  HP: 1000
-  DEF: 1
-  ATK: 100
-  ElemATK: 100
-  CritRate: 10
-  Speed: 1
-  DeathParticle: {fileID: 7492019219895835984, guid: 00f9cca879d88e2489e22736a3f69a6e, type: 3}
-  DamageMatFX: {fileID: 2100000, guid: e02f4fcc74b962c4f9ef8a234a157ad3, type: 2}
-  DoDamage: 1
-  DoDeath: 1
-  IndicateDamage: 0
-  DoDamageEffect: 1
-  Damaged: 0
-  DamageEntity: 0
---- !u!114 &567713110031449681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3763110366849886652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7686c20c262673d45830628c4024161a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  statsSystem: {fileID: 0}
-  GameManager: {fileID: 0}
-  Movepoint:
-  - {fileID: 1633025271064712508}
-  - {fileID: 478596098124169408}
-  - {fileID: 6593718867164549551}
-  - {fileID: 6726310504355019497}
-  - {fileID: 1950747855401962287}
-  - {fileID: 0}
-  MoveAmount: 0
-  prev_Point: 0
-  YOffset: -7.5
-  XOffset: 0
-  IdleModle: {fileID: 2903655394630448407}
-  aud: {fileID: 0}
-  LVLText: {fileID: 5896046346654098971}
-  type: 1
-  level: 0
-  Drops:
-  - {fileID: 11400000, guid: 5640161a1959bff4d8fb6cf5e68a65ee, type: 2}
-  - {fileID: 11400000, guid: 5d542704dc2e4614d8c519723057764f, type: 2}
-  - {fileID: 11400000, guid: 34091464709e5c34cb9a963276c53060, type: 2}
-  - {fileID: 11400000, guid: 2089997a1f03974458c8005a750db9b9, type: 2}
-  - {fileID: 11400000, guid: 146deab386b32054785822a72fee1251, type: 2}
 --- !u!33 &8145240173970011033
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -323,6 +259,93 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -7548719679064968411, guid: 2cbd798824dcd5242b4dc6e91a870ff6, type: 3}
+--- !u!114 &6898917214445598088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3763110366849886652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d71afd4a6df7eb74a975b5580eaac6ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HPBar: {fileID: 5040101268743026248}
+  HPNum: {fileID: 1104537665989728574}
+  MaxHP: 400
+  HP: 1000
+  DEF: 1
+  ATK: 100
+  ElemATK: 100
+  CritRate: 10
+  Speed: 1
+  DeathParticle: {fileID: 7492019219895835984, guid: 00f9cca879d88e2489e22736a3f69a6e, type: 3}
+  DamageMatFX: {fileID: 2100000, guid: e02f4fcc74b962c4f9ef8a234a157ad3, type: 2}
+  textFlash: {fileID: 0}
+  DoDamage: 1
+  DoDeath: 1
+  IndicateDamage: 0
+  DoDamageEffect: 1
+  Damaged: 0
+  TestDamage: 100
+  DamageEntity: 0
+--- !u!114 &567713110031449681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3763110366849886652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7686c20c262673d45830628c4024161a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  statsSystem: {fileID: 0}
+  GameManager: {fileID: 0}
+  Movepoint:
+  - {fileID: 1633025271064712508}
+  - {fileID: 478596098124169408}
+  - {fileID: 6593718867164549551}
+  - {fileID: 6726310504355019497}
+  - {fileID: 1950747855401962287}
+  - {fileID: 0}
+  MoveAmount: 0
+  prev_Point: 0
+  YOffset: -7.5
+  XOffset: 0
+  IdleModle: {fileID: 2903655394630448407}
+  aud: {fileID: 0}
+  LVLText: {fileID: 5896046346654098971}
+  type: 1
+  level: 0
+  Drops:
+  - {fileID: 11400000, guid: 5640161a1959bff4d8fb6cf5e68a65ee, type: 2}
+  - {fileID: 11400000, guid: 5d542704dc2e4614d8c519723057764f, type: 2}
+  - {fileID: 11400000, guid: 34091464709e5c34cb9a963276c53060, type: 2}
+  - {fileID: 11400000, guid: 2089997a1f03974458c8005a750db9b9, type: 2}
+  - {fileID: 11400000, guid: 146deab386b32054785822a72fee1251, type: 2}
+--- !u!114 &3547412777179903052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3763110366849886652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f88634672ef3474ab2e9b80e57be345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 4331968348840362045, guid: 32cea3ca38608504b8a8525f79388247, type: 3}
+  Size: 4
+  moveAmount: 0.5
+  lifespan: 0.5
+  animDur: 0.5
+  offset: {x: 0, y: 2, z: 0}
+  TestText: Text
+  TestTextFlash: 0
 --- !u!1 &4425944122846028858
 GameObject:
   m_ObjectHideFlags: 0
@@ -918,7 +941,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.7329998}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5826504163186215973
@@ -1176,7 +1199,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.1}
+  m_AnchoredPosition: {x: 0, y: 0.333}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9183126614645852573
@@ -1207,7 +1230,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'HP: 1000/1000'
+  m_text: 'HP: 1000/1000
+
+    DEF: 50'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

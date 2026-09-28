@@ -1,37 +1,35 @@
-using System.Collections;
+
 using TMPro;
 using UnityEngine;
 
 public class TextFlash : MonoBehaviour
 {
-    [SerializeField] private float Size = 1.0f;
-    [SerializeField] private float moveAmount=1;
-    [SerializeField] private float lifespan=0.1f;
-    [SerializeField] private float speed=0.5f;
-    [SerializeField] private bool overlapText;
-    private GameObject prevObject;
+    [Header("Configuration")]
+    [SerializeField] GameObject prefab;
+    [SerializeField] private float Size = 4.0f;
+    [SerializeField] private float moveAmount = 1;
+    [SerializeField] private float lifespan = 0.5f;
+    [SerializeField] private float animDur = 0.5f;
+    [SerializeField] private Vector3 offset;
+    [Header("Debug")]
+    [SerializeField] string TestText = "Text";
+    [SerializeField] bool TestTextFlash;
+
+    private void Update()
+    {
+        if (TestTextFlash) { FlashText(TestText); TestTextFlash = false; }
+    }
+
 
     public void FlashText(string text)
     {
-        if (!overlapText)
-        {
-            if (prevObject!=null) LeanTween.cancel(prevObject);
-            if (prevObject != null) Destroy(prevObject);
-        }
-
-        GameObject TextObject = new GameObject(text);
-        prevObject = TextObject;
-        TextObject.transform.position = transform.position;
-        TextObject.AddComponent<TextMeshPro>();
-        TextObject.GetComponent<TextMeshPro>().text = text;
-        TextObject.GetComponent<TextMeshPro>().alignment = TextAlignmentOptions.Center;
-        TextObject.GetComponent<TextMeshPro>().fontSize = Size;
-        TextObject.AddComponent<Billboard>();
-        TextObject.transform.LeanMoveY(moveAmount, speed).setEaseOutQuint().setOnComplete(() =>
-        {
-            LeanTween.delayedCall(lifespan, () => {
-                Destroy(TextObject);
-            });
-        });
+        if (prefab == null) return;
+        GameObject textObj = Instantiate(prefab, transform.position+offset, Quaternion.identity);
+        TextMeshProUGUI textMesh = textObj.GetComponent<TextMeshProUGUI>();
+        textMesh.fontSize = Size/10;
+        textMesh.text = text;
+        textObj.transform.LeanMoveY(textObj.transform.position.y + moveAmount, animDur).setEaseOutQuad();
+        textObj.LeanDelayedCall(lifespan, () => Destroy(textObj));
     }
+
 }

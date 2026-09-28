@@ -11,22 +11,23 @@ public class StatsSystem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI HPNum;
     public int MaxHP = 1000;
     [Range(0, 1000)] public int HP = 1000;
-    public int DEF=1;
-    public int ATK=100;
-    public int ElemATK=100;
-    public int CritRate=10;
-    public int Speed=1;
+    [SerializeField] int DEF=1;
+    [SerializeField] int ATK=100;
+    [SerializeField] int ElemATK=100;
+    [SerializeField] int CritRate=10;
+    [SerializeField] int Speed=1;
 
     [Header("Reference")]
     [SerializeField] private GameObject DeathParticle;
     [SerializeField] private Material DamageMatFX;
+    [SerializeField] TextFlash textFlash;
 
 
     [Header("Properties")]
-    [SerializeField] private bool DoDamage = true;
-    [SerializeField] private bool DoDeath = true;
-    [SerializeField] private bool IndicateDamage;
-    [SerializeField] private bool DoDamageEffect = true;
+    [SerializeField] bool DoDamage = true;
+    [SerializeField] bool DoDeath = true;
+    [SerializeField] bool IndicateDamage;
+    [SerializeField] bool DoDamageEffect = true;
 
 
     [Header("State")]
@@ -34,7 +35,7 @@ public class StatsSystem : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] int TestDamage=100;
-    [SerializeField] private bool DamageEntity;
+    [SerializeField] bool DamageEntity;
 
     //Data
     private readonly List<Material> normal_mat = new();
@@ -66,6 +67,9 @@ public class StatsSystem : MonoBehaviour
                 hpBarFullScaleX = HPBar.transform.localScale.x;
             }
         }
+
+
+        textFlash = GetComponentInChildren<TextFlash>();
     }
 
 
@@ -95,7 +99,8 @@ public class StatsSystem : MonoBehaviour
 
 
         //HP Bar Display
-        if (HPNum != null) HPNum.text = "HP: " + HP.ToString() + "/" + MaxHP.ToString();
+        if (HPNum != null) HPNum.text = $"HP: {HP}/{MaxHP} \n"
+                                      + $"DEF: {DEF}";
         if (HPBar != null)
         {
             float proportion = MaxHP > 0 ? Mathf.Clamp01((float)HP / (float)MaxHP) : 0f;
@@ -119,35 +124,8 @@ public class StatsSystem : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        int actualDamage;
-
-        if (DEF == 0)
-        {
-            // Special case: No defense modifier, use base multiplier.
-            actualDamage = (int)(damage * 1.2f);
-        }
-        else
-        {
-            float multiplier;
-            if (DEF > 0)
-            {
-                // Positive DEF: Use ratio formula for guaranteed reduction (R1).
-                multiplier = (1.2f / (1.0f + DEF * 0.01f));
-            }
-            else // DEF < 0
-            {
-                // Negative DEF: Keep original amplification formula, which works well here.
-                multiplier = (-0.1f * DEF) + 1.2f;
-            }
-
-            actualDamage = (int)(damage * multiplier);
-        }
-
-        // FIX R2: Ensure minimum damage is always 10, regardless of calculation result.
-        actualDamage = Mathf.Max(10, actualDamage);
-
-
-
+        int actualDamage = damage - DEF;
+        if (textFlash!=null) textFlash.FlashText("" + actualDamage);
 
         if (DoDamage)
         {
@@ -214,4 +192,25 @@ public class StatsSystem : MonoBehaviour
         c_dmgEffect = null;
         Damaged = false;
     }
+
+    public void AddHP(int amount) { HP += amount; if (HP > MaxHP) HP = MaxHP; }
+    public void AddDEF(int amount) { DEF += amount; }
+    public void AddATK(int amount) { ATK += amount; }
+    public void AddElemATK(int amount) { ElemATK += amount; }
+    public void AddCritRate(int amount) { CritRate += amount; }
+    public void AddSpeed(int amount) { Speed += amount; }
+
+    public void SetHP(int amount) { HP = amount; if (HP > MaxHP) HP = MaxHP; }
+    public void SetDEF(int amount) { DEF = amount; }
+    public void SetATK(int amount) { ATK = amount; }
+    public void SetElemATK(int amount) { ElemATK = amount; }
+    public void SetCritRate(int amount) { CritRate = amount; }
+    public void SetSpeed(int amount) { Speed = amount; }
+
+    public int GetHP() { return HP; }
+    public int GetDEF() { return DEF; }
+    public int GetATK() { return ATK; }
+    public int GetElemATK() { return ElemATK; }
+    public int GetCritRate() { return CritRate; }
+    public int GetSpeed() { return Speed; }
 }

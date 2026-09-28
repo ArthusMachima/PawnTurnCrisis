@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Wooden Plating
   itemDescription: A broken piece of a wooden chess board that's conveniently shaped
-    like a plate. Wearing this reduces the impact from attacks. +10 DEF, -2 CritRate,
-    -3 Speed.
+    like a plate. Wearing this reduces the impact from attacks. +20 DEF, -2 CritRate,
+    -1 Speed.
   itemIcon: {fileID: 0}
-  RarityValue: 3
+  RarityValue: 1
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: 0
   AddedATK: 0
   AddedElemATK: 0
   AddedCritRate: -2
-  AddedDEF: 10
-  AddedSPEED: -2
+  AddedDEF: 20
+  AddedSPEED: -1

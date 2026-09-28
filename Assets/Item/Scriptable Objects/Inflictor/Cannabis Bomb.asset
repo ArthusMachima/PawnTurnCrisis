@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Cannabis Bomb
   m_EditorClassIdentifier: 
   itemName: Cannabis Bomb
-  itemDescription: Causes enemies to go berserk but vulnerable. +200 ATK, -20 DEF,
+  itemDescription: Causes enemies to go berserk but vulnerable. +250 ATK, -100 DEF,
     +3 Speed
   itemIcon: {fileID: 0}
   RarityValue: 3
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: 0
-  AddedATK: 200
+  AddedATK: 250
   AddedElemATK: 0
   AddedCritRate: 0
-  AddedDEF: -20
+  AddedDEF: -100
   AddedSPEED: 3

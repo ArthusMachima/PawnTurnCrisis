@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Steroid 30mL
   m_EditorClassIdentifier: 
   itemName: Steroid 30mL
-  itemDescription: Overclocks the muscles of your body. +40 ATK, +20 DEF, -500 HP,
+  itemDescription: Overclocks the muscles of your body. +80 ATK, +130 DEF, -500 HP,
     +2 CritRate.
   itemIcon: {fileID: 0}
   RarityValue: 3
   PerTurnDuration: 0
   particleEffect: {fileID: 0}
   AddedHP: -500
-  AddedATK: 40
+  AddedATK: 80
   AddedElemATK: 0
   AddedCritRate: 2
-  AddedDEF: 20
+  AddedDEF: 130
   AddedSPEED: 0

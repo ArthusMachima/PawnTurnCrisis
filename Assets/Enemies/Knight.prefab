@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 8690556445807669783}
   - component: {fileID: 1954479800109783037}
   - component: {fileID: 3052703870592831024}
+  - component: {fileID: 3156024254244791989}
   - component: {fileID: 8051576498150590556}
   - component: {fileID: 1567862024012472940}
-  - component: {fileID: 3156024254244791989}
+  - component: {fileID: 7672735418747689565}
   m_Layer: 0
   m_Name: Knight
   m_TagString: Untagged
@@ -87,6 +88,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &3156024254244791989
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 23320981736782042}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -3018324491999695181, guid: 1b76ec6ef1ff6bf4fabb3e5e00964982, type: 3}
 --- !u!114 &8051576498150590556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,11 +133,13 @@ MonoBehaviour:
   Speed: 1
   DeathParticle: {fileID: 7492019219895835984, guid: 00f9cca879d88e2489e22736a3f69a6e, type: 3}
   DamageMatFX: {fileID: 2100000, guid: e02f4fcc74b962c4f9ef8a234a157ad3, type: 2}
+  textFlash: {fileID: 0}
   DoDamage: 1
   DoDeath: 1
   IndicateDamage: 0
   DoDamageEffect: 1
   Damaged: 0
+  TestDamage: 100
   DamageEntity: 0
 --- !u!114 &1567862024012472940
 MonoBehaviour:
@@ -155,28 +180,26 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 65b528da83b814d4d9ee9d5ba993e74d, type: 2}
   - {fileID: 11400000, guid: 11235070f23cf6746ba755daa7ad9b1f, type: 2}
   - {fileID: 11400000, guid: 146deab386b32054785822a72fee1251, type: 2}
---- !u!64 &3156024254244791989
-MeshCollider:
+--- !u!114 &7672735418747689565
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 23320981736782042}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -3018324491999695181, guid: 1b76ec6ef1ff6bf4fabb3e5e00964982, type: 3}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f88634672ef3474ab2e9b80e57be345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 4331968348840362045, guid: 32cea3ca38608504b8a8525f79388247, type: 3}
+  Size: 4
+  moveAmount: 0.5
+  lifespan: 0.5
+  animDur: 0.5
+  offset: {x: 0, y: 2, z: 0}
+  TestText: Text
+  TestTextFlash: 0
 --- !u!1 &265630011292940440
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,7 +234,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0.71400017}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4283083445101082365
@@ -1179,7 +1202,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.1}
+  m_AnchoredPosition: {x: 0, y: 0.314}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9183126614645852573
@@ -1210,7 +1233,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'HP: 1000/1000'
+  m_text: 'HP: 1000/1000
+
+    DEF: 100'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
