@@ -398,10 +398,11 @@ public class GameManager : MonoBehaviour
         }
 
         //Triggers
-        if (ShowCursorTrigger!=_ShowCursorTrigger) { ShowCursor(ShowCursorTrigger); _ShowCursorTrigger = ShowCursorTrigger; }
-        if (TriggerCinemaView) { DoCinemaView(); TriggerCinemaView = false; }
-        if (TriggerFirstPersonView) { DoFirstPersonView(); TriggerFirstPersonView = false; }
-        if (TriggerLandscapeView) { DoLandscapeView(); TriggerLandscapeView = false; }
+        if (ShowCursorTrigger!=_ShowCursorTrigger)
+        {
+            ShowCursor(ShowCursorTrigger);
+            _ShowCursorTrigger = ShowCursorTrigger;
+        }
 
         //Variable Syncing
         ScoreCounterText.text = "Score: " + Score;
@@ -475,18 +476,6 @@ public class GameManager : MonoBehaviour
             StageInfo.transform.LeanMoveX(Screen.width - 80, AnimationTime).setEaseOutQuint();
             StatsPanel.transform.LeanMoveX(0, AnimationTime).setEaseOutQuint();
             ShowCursor(true); // Replaced Cursor.visible = true;
-
-            string difficulty;
-            switch (PlayerPrefs.GetInt("LVL", 2))
-            {
-                case 0:  { difficulty = "Easy"; break; }
-                case 1:  { difficulty = "Normal"; break; }
-                case 2:  { difficulty = "Hard"; break; }
-                default: { difficulty = "Overclock"; break; }
-            }
-
-            DifficultyDisplay.text = difficulty;
-            WaveCounter.text = "SCENE : " + ConvertToRomanNumerals(Wave);
         }
     }
 
@@ -605,7 +594,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 1:
                         if (remedy.AddedDEF == 0) break;
-                        PlayerStats.AddDEF(remedy.AddedDEF);
+                        PlayerStats.DEF += remedy.AddedDEF;
                         if (remedy.AddedDEF > 0)
                             DisplayMessage($"+{remedy.AddedDEF} to your DEF!", true, 2);
                         else if (remedy.AddedDEF < 0)
@@ -614,7 +603,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 2:
                         if (remedy.AddedATK == 0) break;
-                        PlayerStats.AddATK(remedy.AddedATK);
+                        PlayerStats.ATK += remedy.AddedATK;
                         if (remedy.AddedATK > 0)
                             DisplayMessage($"+{remedy.AddedATK} to your ATK!", true, 2);
                         else if (remedy.AddedATK < 0)
@@ -623,7 +612,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 3:
                         if (remedy.AddedElemATK == 0) break;
-                        PlayerStats.AddElemATK(remedy.AddedElemATK);
+                        PlayerStats.ElemATK += remedy.AddedElemATK;
                         if (remedy.AddedElemATK > 0)
                             DisplayMessage($"+{remedy.AddedElemATK} to your ElemATK!", true, 2);
                         else if (remedy.AddedElemATK < 0)
@@ -632,7 +621,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 4:
                         if (remedy.AddedCritRate == 0) break;
-                        PlayerStats.AddCritRate(remedy.AddedCritRate);
+                        PlayerStats.CritRate += remedy.AddedCritRate;
                         if (remedy.AddedCritRate > 0)
                             DisplayMessage($"+{remedy.AddedCritRate} to your CritRate!", true, 2);
                         else if (remedy.AddedCritRate < 0)
@@ -641,7 +630,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 5:
                         if (remedy.AddedSPEED == 0) break;
-                        PlayerStats.AddSpeed(remedy.AddedSPEED);
+                        PlayerStats.Speed += remedy.AddedSPEED;
                         if (remedy.AddedSPEED > 0)
                             DisplayMessage($"+{remedy.AddedSPEED} to your Speed!", true, 2);
                         else if (remedy.AddedSPEED < 0)
@@ -674,7 +663,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 1:
                         if (inflictor.AddedDEF == 0) break;
-                        foreach (var enemy in enemyStats) enemy.AddDEF(inflictor.AddedDEF);
+                        foreach (var enemy in enemyStats) enemy.DEF = inflictor.AddedDEF;
                         if (inflictor.AddedDEF > 0)
                             DisplayMessage($"+{inflictor.AddedDEF} to enemies' DEF!", true, 2);
                         else if (inflictor.AddedDEF < 0)
@@ -683,7 +672,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 2:
                         if (inflictor.AddedATK == 0) break;
-                        foreach (var enemy in enemyStats) enemy.AddATK(inflictor.AddedATK);
+                        foreach (var enemy in enemyStats) enemy.ATK = inflictor.AddedATK;
                         if (inflictor.AddedATK > 0)
                             DisplayMessage($"+{inflictor.AddedATK} to enemies' ATK!", true, 2);
                         else if (inflictor.AddedATK < 0)
@@ -692,7 +681,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 3:
                         if (inflictor.AddedElemATK == 0) break;
-                        foreach (var enemy in enemyStats) enemy.AddElemATK(inflictor.AddedElemATK);
+                        foreach (var enemy in enemyStats) enemy.ElemATK = inflictor.AddedElemATK;
                         if (inflictor.AddedElemATK > 0)
                             DisplayMessage($"+{inflictor.AddedElemATK} to enemies' ElemATK!", true, 2);
                         else if (inflictor.AddedElemATK < 0)
@@ -701,7 +690,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 4:
                         if (inflictor.AddedCritRate == 0) break;
-                        foreach (var enemy in enemyStats) enemy.AddCritRate(inflictor.AddedCritRate);
+                        foreach (var enemy in enemyStats) enemy.CritRate = inflictor.AddedCritRate;
                         if (inflictor.AddedCritRate > 0)
                             DisplayMessage($"+{inflictor.AddedCritRate} to enemies' CritRate!", true, 2);
                         else if (inflictor.AddedCritRate < 0)
@@ -710,7 +699,7 @@ public class GameManager : MonoBehaviour
                         break;
                     case 5:
                         if (inflictor.AddedSPEED == 0) break;
-                        foreach (var enemy in enemyStats) enemy.AddSpeed(inflictor.AddedSPEED);
+                        foreach (var enemy in enemyStats) enemy.Speed = inflictor.AddedSPEED;
                         if (inflictor.AddedSPEED > 0)
                             DisplayMessage($"+{inflictor.AddedSPEED} to enemies' Speed!", true, 2);
                         else if (inflictor.AddedSPEED < 0)
@@ -1010,11 +999,11 @@ public class GameManager : MonoBehaviour
             DoLandscapeView();
             PlayerStatsText.text = 
                 $"HP: {PlayerStats.HP}/1000\r\n" +
-                $"ATK: {PlayerStats.GetATK()}\r\n" +
-                $"ElemATK: {PlayerStats.GetElemATK()}\r\n" +
-                $"CritRate: {PlayerStats.GetCritRate()}%\r\n" +
-                $"DEF: {PlayerStats.GetDEF()}\r\n" +
-                $"SPEED: {PlayerStats.GetSpeed()}\r\n";
+                $"ATK: {PlayerStats.ATK}\r\n" +
+                $"ElemATK: {PlayerStats.ElemATK}\r\n" +
+                $"CritRate: {PlayerStats.CritRate}%\r\n" +
+                $"DEF: {PlayerStats.DEF}\r\n" +
+                $"SPEED: {PlayerStats.Speed}\r\n";
 
             int i = 0;
             foreach (GameObject enemy in CurEnemies)
@@ -1023,11 +1012,11 @@ public class GameManager : MonoBehaviour
                 EnemyStatsText[i].gameObject.SetActive(true);
                 EnemyStatsText[i].text =
                 $"HP: {stats.HP}\r\n" +
-                $"ATK: {stats.GetATK()}\r\n" +
-                $"ElemATK: {stats.GetElemATK()}\r\n" +
-                $"CritRate: {stats.GetCritRate()}%\r\n" +
-                $"DEF: {stats.GetDEF()}\r\n" +
-                $"SPEED: {stats.GetSpeed()}\r\n";
+                $"ATK: {stats.ATK}\r\n" +
+                $"ElemATK: {stats.ElemATK}\r\n" +
+                $"CritRate: {stats.CritRate}%\r\n" +
+                $"DEF: {stats.DEF}\r\n" +
+                $"SPEED: {stats.Speed}\r\n";
                 i++;
             }
 
@@ -1111,6 +1100,7 @@ public class GameManager : MonoBehaviour
         {
             if (Wave>6)
             {
+                Debug.Log("Enemy amount randomized");
                 EnemyAmount = Random.Range(4, Wave + 1);
             }
             else
@@ -1355,6 +1345,7 @@ public class GameManager : MonoBehaviour
         else
             ClipIndex = 6;
 
+        Debug.Log("Reloaded");
         foreach (GameObject bullets in Bullets) bullets.SetActive(false); 
         for (int i = 0; i < bullet; i++)
         {

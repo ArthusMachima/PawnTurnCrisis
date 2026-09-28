@@ -27,13 +27,13 @@ public class ShootWithMouse : MonoBehaviour
                 if (doDamage)
                 {
                     int critChance = Random.Range(0, 101);
-                    if (critChance <= GameManager.Instance.PlayerStats.GetCritRate())
+                    if (critChance <= GameManager.Instance.PlayerStats.CritRate)
                     {
-                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.GetATK() * 2, true);
+                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.ATK * 2, true);
                     }
                     else
                     {
-                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.GetATK(), false);
+                        SendDamage(hit.transform.gameObject, GameManager.Instance.PlayerStats.ATK, false);
                     }
                 }
             }

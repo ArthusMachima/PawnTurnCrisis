@@ -1662,20 +1662,18 @@ MonoBehaviour:
   HPNum: {fileID: 5072728796986334886}
   MaxHP: 1000
   HP: 1000
-  DEF: 0
-  ATK: 200
-  ElemATK: 400
+  DEF: 1
+  ATK: 100
+  ElemATK: 100
   CritRate: 10
   Speed: 1
   DeathParticle: {fileID: 0}
   DamageMatFX: {fileID: 0}
-  textFlash: {fileID: 0}
   DoDamage: 1
   DoDeath: 0
   IndicateDamage: 0
   DoDamageEffect: 0
   Damaged: 0
-  TestDamage: 100
   DamageEntity: 0
 --- !u!114 &368827037
 MonoBehaviour:
@@ -3754,7 +3752,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82b0464633efe8544b376978b560f89d, type: 3}
   m_Name: 
@@ -19584,7 +19582,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 292, y: -488}
+  m_AnchoredPosition: {x: 381.0433, y: -488.3869}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2382045418418905317
@@ -25400,9 +25398,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'HP: 1000/1000
-
-    DEF: 50'
+  m_text: 'HP: 1000/1000'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
