@@ -24,7 +24,6 @@ public class StatsSystem : MonoBehaviour
 
 
     [Header("Properties")]
-    [SerializeField] bool EnableDefHealing = true;
     [SerializeField] bool DoDamage = true;
     [SerializeField] bool DoDeath = true;
     [SerializeField] bool IndicateDamage;
@@ -126,8 +125,8 @@ public class StatsSystem : MonoBehaviour
     public void TakeDamage(int damage)
     {
         int actualDamage = damage - DEF;
-        if (textFlash) textFlash.FlashText("" + actualDamage);
-        if (!EnableDefHealing && actualDamage < 0) actualDamage = 0; 
+        if (textFlash!=null) textFlash.FlashText("" + actualDamage);
+
         if (DoDamage)
         {
             HP -= actualDamage;

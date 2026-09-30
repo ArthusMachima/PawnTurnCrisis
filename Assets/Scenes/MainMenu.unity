@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 904992ff511cda34ea621a56e5e1e644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TitlePane: {fileID: 1549127138}
+  TitlePane: {fileID: 534413132}
   CreditsPane: {fileID: 184338400}
   PlayPropertiesPane: {fileID: 195586746}
   LeaderBoardsPane: {fileID: 1094323224}
