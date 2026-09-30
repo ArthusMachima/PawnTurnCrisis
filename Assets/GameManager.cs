@@ -9,6 +9,18 @@ using Cursor = UnityEngine.Cursor;
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField] int morale = 100;
+    readonly int maxMorale = 100;
+    
+    
+    [Header("Debug")]
+    [SerializeField] bool BypassVentReq;
+    [SerializeField] bool AvoidPlayerDamage;
+    [SerializeField] bool doGameControls = true;
+    [SerializeField] bool ShowCursorTrigger;
+    bool _ShowCursorTrigger;
+    
+    
     [Header("Panel Test")]
     [SerializeField] bool PanelDebug;
     [SerializeField] bool TriggerChoicePanel;
@@ -17,15 +29,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] bool TriggerAnalysisPanel;
     [SerializeField] bool TriggerStatsPanel;
     [SerializeField] bool TriggerHighscorePanel;
- 
-    
-    
-    [Header("Debug")]
-    [SerializeField] private bool BypassVentReq;
-    [SerializeField] private bool AvoidPlayerDamage;
-    [SerializeField] bool doGameControls = true;
-    [SerializeField] bool ShowCursorTrigger;
-    bool _ShowCursorTrigger;
 
     [Header("Debug - Panels")]
     [SerializeField] float BulletDiagonalAmount;
@@ -80,21 +83,14 @@ public class GameManager : MonoBehaviour
     }
 
 
-
     [Header("Debug - Cam Controls")]
-    [SerializeField] private bool TriggerEnvironmentScene1;
-    [SerializeField] private bool TriggerEnvironmentScene2;
     [SerializeField] private bool TriggerFirstPersonView;
-    [SerializeField] private bool ManualCinemaView_Prev;
-    [SerializeField] private bool ManualCinemaIndex_Next;
-    [SerializeField] private int ManualCinemaIndex;
-
-    [Header("Debug - Scene Controls")]
-    [SerializeField] private bool RerunIntro;
-    [SerializeField] private bool TriggerStopCamMovement;
     [SerializeField] private bool TriggerCinemaView;
     [SerializeField] private bool TriggerLandscapeView;
-    [SerializeField] private bool EnemyMoveTest;
+    [SerializeField] private bool TriggerPlayerView;
+    [SerializeField] private bool TriggerEnemyView;
+
+    [Header("Debug - Scene Controls")]
     [SerializeField] private ShaderEffect_BleedingColors ColorBleed;
     [SerializeField] private ShaderEffect_Unsync Unsync;
 
@@ -130,6 +126,7 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Stats Panel Properties")]
+    [SerializeField] bool processingTurn;
     [SerializeField] int Wave = 0;
     [SerializeField] CanvasGroup WaveCounterOnCinematize;
     [SerializeField] CanvasGroup ScoreCounterOnCinematize;
@@ -138,7 +135,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI HighScoreCounter;
     [SerializeField] int Score;
     public StatsSystem PlayerStats;
-    [SerializeField] bool isPlayerAlive = true;
+    public bool isPlayerAlive = true;
     [SerializeField] GameObject StatsPanel;
     [SerializeField] ConsoleText ConsoleText;
     [SerializeField] ScoreSystem ScoreSystem;
@@ -153,6 +150,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CanvasGroup AttackPanelCanvas;
     [SerializeField] private GameObject MessagePanel;
     [SerializeField] private TextMeshProUGUI MessagePanelText;
+    [SerializeField]  List<EnemyAI> fleeList = new();
+    [SerializeField] Util_BarVisualizer moraleBar;
 
     [Header("Choice Panel Properties")]
     [SerializeField] private GameObject ChoicePanel;
@@ -339,7 +338,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        if (isPlayerAlive) EndTurn();
+                        if (isPlayerAlive) DoEndTurn();
                     }
                 }
 
@@ -348,6 +347,9 @@ public class GameManager : MonoBehaviour
                     RestartTooltip();
                     if (ClipIndex > 0)
                     {
+                        morale += 20;
+                        if (morale > maxMorale) morale = maxMorale;
+                        moraleBar.SetCurrent(morale);
                         AttackShoot(); //Cylinder and Bullets Animation
                         Shooter.Shoot();
                         StartCoroutine(ShootEffect());
@@ -411,6 +413,8 @@ public class GameManager : MonoBehaviour
         if (TriggerCinemaView) { DoCinemaView(); TriggerCinemaView = false; }
         if (TriggerFirstPersonView) { DoFirstPersonView(); TriggerFirstPersonView = false; }
         if (TriggerLandscapeView) { DoLandscapeView(); TriggerLandscapeView = false; }
+        if (TriggerPlayerView) { DoPlayerView(); TriggerPlayerView = false; }
+        if (TriggerEnemyView) { DoEnemyView(); TriggerEnemyView = false; }
 
 
         if (PanelDebug)
@@ -602,6 +606,9 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator OnItemUsed(ItemClass item)
     {
+        morale += 10;
+        if (morale>maxMorale) morale=maxMorale;
+        moraleBar.SetCurrent(morale);
         ItemUseHalo.SetActive(true);
         HideStatsPanel(false);
         InvUI.ShowInventory(false);
@@ -694,7 +701,11 @@ public class GameManager : MonoBehaviour
                 {
                     case 0:
                         if (inflictor.AddedHP == 0) break;
-                        foreach (var enemy in enemyStats) enemy.HP =+ inflictor.AddedHP;
+                        foreach (var enemy in enemyStats)
+                        {
+                            enemy.HP = +inflictor.AddedHP;
+                            if (enemy.HP > enemy.MaxHP) enemy.HP = enemy.MaxHP;
+                        }
                         if (inflictor.AddedHP > 0)
                             DisplayMessage($"+{inflictor.AddedHP} to enemies' HP!", true, 2);
                         else if (inflictor.AddedHP < 0)
@@ -1007,9 +1018,16 @@ public class GameManager : MonoBehaviour
 
 
         VentModeControls = false;
-        for (int i = 0; i < 8; i++) Instantiate(UltExplosion, (ViewPoints[0].position) + new Vector3(ViewPoints[0].position.x, Random.Range(-1, 1), Random.Range(-4, 4)), Quaternion.identity);
+        for (int i = 0; i < 8; i++) Instantiate(UltExplosion,
+            (ViewPoints[0].position) + new Vector3(ViewPoints[0].position.x,
+                Random.Range(-1, 1),
+                Random.Range(-4, 4)),
+            Quaternion.identity);
         aud.PlaySound(aud.SoundFX, aud.s_UltExplosion);
         foreach (StatsSystem stats in enemyStats) stats.TakeDamage((int)VentDamage);
+        morale -= 50;
+        if (morale < 0) morale = 0;
+        moraleBar.SetCurrent(morale);
         VentPanel.SetActive(false);
         DoCinemaView();
         ColorBleed.intensity = 100;
@@ -1102,7 +1120,9 @@ public class GameManager : MonoBehaviour
         else
         {
             aud.PlaySound(aud.SoundFX, aud.s_EnemyBash);
-            if (!AvoidPlayerDamage) PlayerStats.TakeDamage(dmg);
+            float moraleFactor = (maxMorale-morale) / 100f + 1;
+            if (!AvoidPlayerDamage) PlayerStats.TakeDamage((int)(dmg*moraleFactor));
+            if (morale<=40) PlayerStats.SetDEF(PlayerStats.GetDEF()-PlayerStats.GetDEF()/7);
             StartCoroutine(Damaged());
             if (criticalhit)
             {
@@ -1173,17 +1193,47 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void EndTurn()
+    void DoEndTurn()
     {
-        HideAttackPanel(true);
-        DoCinemaView();
-        HideChoicePanel(false);
-        StartUpChoicePanel(true);
+        if (processingTurn) return;
+        StartCoroutine(EndTurn());
+        processingTurn = true;
+    }
+    
+    
+    IEnumerator EndTurn()
+    {
+        fleeList.Clear();
+        
         foreach (var t in CurEnemies)
         {
             t.transform.GetChild(0).gameObject.SetActive(true);
             t.transform.GetChild(0).gameObject.GetComponent<StatsSystem>().RestoreMaterial();
+            EnemyAI enemy = t.GetComponentInChildren<EnemyAI>();
+            if (enemy.GetPersistence()<=0) fleeList.Add(enemy);
         }
+
+        HideAttackPanel(true);
+        
+        if (fleeList.Count > 0)
+        {
+            DoEnemyView();
+            DisplayMessage("Enemy fled", false, 2);
+            Debug.Log(fleeList.Count);
+            
+            
+            for (int i = 0; i < fleeList.Count; i++)
+            {
+                var enemy = fleeList[i];
+                enemy.Flee();
+                fleeList.RemoveAt(i); 
+                yield return new WaitForSeconds(2f);
+            }
+        }
+        
+        DoCinemaView();
+        HideChoicePanel(false);
+        StartUpChoicePanel(true);
 
         foreach (var t in AllEnemies)
         {
@@ -1216,6 +1266,7 @@ public class GameManager : MonoBehaviour
         {
             t.transform.Find("Idle").gameObject.SetActive(false);
         }
+        processingTurn = false;
     }
 
     void EndWave()
@@ -1441,6 +1492,9 @@ public class GameManager : MonoBehaviour
         ColorBleed.intensity = 10;
         ColorBleed.shift = 0.02f;
         if (onSelf) AddScore("Parried");
+        morale -= 20;
+        if (morale < 0) morale = 0;
+        moraleBar.SetCurrent(morale);
     }
 
 

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
@@ -18,13 +17,15 @@ public class EnemyAI : MonoBehaviour
     public AudioManager aud;
     [SerializeField] private TextMeshProUGUI LVLText;
     public Coroutine StartTurnCoroutine;
+    [SerializeField] int persistence;
+    bool fled;
 
     [Header("Type Properties")]
     [SerializeField] private int type;
     public int level;
     [SerializeField] ItemClass[] Drops;
-
-    private void Start()
+    
+    void Start()
     {
         LVLText.text = "LVL " + level;
         LVLText.gameObject.SetActive(false);
@@ -32,20 +33,21 @@ public class EnemyAI : MonoBehaviour
         statsSystem = GetComponent<StatsSystem>();
         statsSystem.SetDEF(Random.Range(1, 50 * level));
         statsSystem.SetATK(Random.Range(100, 100 * level));
-        statsSystem.SetCritRate(Random.Range(10, 10 + (10 * level) / 4));
+        statsSystem.SetCritRate(Random.Range(10, 10 + 10 * level / 4));
         aud = FindAnyObjectByType<AudioManager>();
+        persistence = Random.Range(1,6);
 
         Movepoint[5] = GameObject.Find("Player").transform;
     }
-
-    private void OnEnable()
+    
+    void OnEnable()
     {
         IdleModle.SetActive(false);
     }
-
-    private bool previousDamagedState;
-
-    private void Update()
+    
+    bool previousDamagedState;
+    
+    void Update()
     {
         if (statsSystem.Damaged != previousDamagedState)
         {
@@ -62,13 +64,16 @@ public class EnemyAI : MonoBehaviour
             previousDamagedState = statsSystem.Damaged;
         }
     }
-
-    private void OnDestroy()
+    
+    void OnDestroy()
     {
+        if (!GameManager.isPlayerAlive) return;
+        
         IdleModle.SetActive(false);
         GameManager.CurEnemies.Remove(gameObject.transform.parent.gameObject);
         GameManager.MovedEnemiesAmount++;
 
+        if (fled) return; 
         int randomItemPick = Random.Range(0, Drops.Length - 1);
         int chance = Random.Range(1, Drops[randomItemPick].RarityValue);
         if (chance == 1)
@@ -188,7 +193,7 @@ public class EnemyAI : MonoBehaviour
         });
     }
 
-    private readonly LeanTweenType[] eases = {
+    readonly LeanTweenType[] eases = {
     LeanTweenType.easeOutElastic,
     LeanTweenType.easeInOutSine,
     LeanTweenType.easeOutQuint,
@@ -236,10 +241,16 @@ public class EnemyAI : MonoBehaviour
                 break;
         }
     }
-
-    private void ApplyDamageAndLog(bool isCritical)
+    
+    void ApplyDamageAndLog(bool isCritical)
     {
         float trueDamage = statsSystem.GetATK() * (PlayerPrefs.GetInt("LVL", 2) * 0.5f);
+        float dmgDealt = trueDamage - GameManager.PlayerStats.GetDEF();
+
+        persistence--;
+        if (dmgDealt < 100*level/1.7f) persistence -= dmgDealt < 0 ? 3 : 1;
+        if (GameManager.PlayerStats.GetATK()-25 < statsSystem.GetDEF()) persistence++;
+        
         GameManager.DamagePlayer((int)trueDamage * (isCritical ? 2 : 1), isCritical);
         LVLText.gameObject.SetActive(true);
     }
@@ -251,5 +262,19 @@ public class EnemyAI : MonoBehaviour
         {
             StopCoroutine(StartTurnCoroutine);
         }
+    }
+
+    public int GetPersistence()
+    {
+        return persistence;
+    }
+
+    public void Flee()
+    {
+        fled = true;
+        gameObject.LeanMoveX(transform.position.x + 30, 1f).setDelay(0.5f).setEaseOutQuad().setOnComplete(() =>
+        {
+            Destroy(gameObject);
+        });
     }
 }
